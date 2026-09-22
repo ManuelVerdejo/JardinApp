@@ -83,13 +83,6 @@ function AppContent() {
           <div className="flex items-center gap-2">
             <FontSizeControl />
             <ThemeToggle />
-            <div className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full flex items-center gap-1 sm:gap-1.5 shadow-cute ${
-              isDark ? 'bg-gray-700' : 'glass'
-            }`}>
-              <SparklesIcon size={10} className="text-yellow-500 sm:hidden" />
-              <SparklesIcon size={12} className="text-yellow-500 hidden sm:block" />
-              <span className={`text-[9px] sm:text-[10px] font-bold ${isDark ? 'text-gray-300' : 'text-green-700'}`}>Offline</span>
-            </div>
           </div>
         </div>
       </header>
