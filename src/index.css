@@ -235,6 +235,120 @@ body {
 .animate-sway { animation: sway ease-in-out infinite; }
 .animate-crawl { animation: crawl 20s linear infinite; }
 
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes float-particle {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+  50% { transform: translate(30px, -30px) scale(1.2); opacity: 0.6; }
+}
+
+@keyframes pulse-slow {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spin-reverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes orbit {
+  0% { transform: rotate(0deg) translateX(100px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(100px) rotate(-360deg); }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounce-scale {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes text-glow {
+  0%, 100% { text-shadow: 0 0 10px rgba(74, 222, 128, 0.5); }
+  50% { text-shadow: 0 0 20px rgba(74, 222, 128, 0.8), 0 0 30px rgba(74, 222, 128, 0.4); }
+}
+
+@keyframes petal {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(5deg) scale(1.05); }
+}
+
+@keyframes magic-sparkle {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes sun-rise {
+  0% { transform: translateY(40px); opacity: 0.5; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes ray {
+  0%, 100% { opacity: 0.4; transform: scaleY(1); }
+  50% { opacity: 0.8; transform: scaleY(1.2); }
+}
+
+@keyframes water-drop {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(60px); opacity: 0; }
+}
+
+@keyframes splash {
+  0%, 100% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1); opacity: 0.6; }
+}
+
+@keyframes veg-appear {
+  0% { transform: translateY(20px) scale(0); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes celebration-sparkle {
+  0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(180deg); }
+}
+
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease infinite;
+}
+.animate-float-particle { animation: float-particle ease-in-out infinite; }
+.animate-pulse-slow { animation: pulse-slow 3s ease-in-out infinite; }
+.animate-spin-slow { animation: spin-slow 8s linear infinite; }
+.animate-spin-reverse { animation: spin-reverse 6s linear infinite; }
+.animate-orbit { animation: orbit linear infinite; }
+.animate-fade-in-up { animation: fade-in-up 0.6s ease-out; }
+.animate-bounce-scale { animation: bounce-scale 1s ease-in-out infinite; }
+.animate-shimmer { animation: shimmer 2s ease-in-out infinite; }
+.animate-text-glow { animation: text-glow 2s ease-in-out infinite; }
+.animate-petal { animation: petal 2s ease-in-out infinite; }
+.animate-magic-sparkle { animation: magic-sparkle 1.5s ease-in-out infinite; }
+.animate-sun-rise { animation: sun-rise 2s ease-out forwards; }
+.animate-ray { animation: ray 2s ease-in-out infinite; }
+.animate-water-drop { animation: water-drop 1s ease-in infinite; }
+.animate-splash { animation: splash 1s ease-in-out infinite; }
+.animate-veg-1 { animation: veg-appear 0.8s ease-out forwards; animation-delay: 0.2s; }
+.animate-veg-2 { animation: veg-appear 0.8s ease-out forwards; animation-delay: 0.5s; }
+.animate-veg-3 { animation: veg-appear 0.8s ease-out forwards; animation-delay: 0.8s; }
+.animate-celebration-sparkle { animation: celebration-sparkle 1.5s ease-in-out infinite; }
+
 /* ============ UTILIDADES ============ */
 .glass {
   background: rgba(255, 255, 255, 0.7);
