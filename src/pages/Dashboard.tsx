@@ -170,7 +170,7 @@ export default function Dashboard({ onOpenFicha }: Props) {
           <h2 className="text-sm font-black text-gray-800 uppercase tracking-wide">Semáforo de Riego</h2>
         </div>
         
-        <div className="space-y-3">
+        <div className="space-y-2.5 sm:space-y-3">
           {sortedPlantas.map((planta, index) => {
             const status = getWaterStatus(planta);
             const style = cardStyles[status.status];
@@ -179,14 +179,14 @@ export default function Dashboard({ onOpenFicha }: Props) {
             return (
               <div
                 key={planta.planta_id}
-                className={`rounded-2xl border-2 ${style.border} ${style.bg} p-4 shadow-cute transition-all duration-300 ${
+                className={`rounded-2xl border-2 ${style.border} ${style.bg} p-3 sm:p-4 shadow-cute transition-all duration-300 ${
                   isWatered ? 'animate-pop scale-[1.02]' : ''
                 }`}
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                   {/* Plant face */}
-                  <div className="relative">
+                  <div className="relative flex-shrink-0">
                     <PlantFace status={status.face} emoji={planta.emoji} />
                     {isWatered && (
                       <div className="absolute -top-2 -right-2 animate-heart">
@@ -197,25 +197,25 @@ export default function Dashboard({ onOpenFicha }: Props) {
                   
                   {/* Info */}
                   <div className="flex-1 min-w-0" onClick={() => onOpenFicha(planta.nombre)}>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className={`font-black text-sm ${style.text}`}>{planta.nombre}</h3>
-                      <span className={`text-[10px] px-2 py-0.5 rounded-full text-white font-bold ${style.badge} shadow-sm flex items-center gap-1`}>
+                    <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                      <h3 className={`font-black text-xs sm:text-sm ${style.text} truncate`}>{planta.nombre}</h3>
+                      <span className={`text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full text-white font-bold ${style.badge} shadow-sm flex items-center gap-0.5 sm:gap-1 flex-shrink-0`}>
                         {status.status === 'happy' ? <><Icon emoji="✨" size={10} /> Al día</> : 
                          status.status === 'thirsty' ? <><Icon emoji="💦" size={10} /> Regar hoy</> : 
                          <><Icon emoji="🆘" size={10} /> ¡Sedienta!</>}
                       </span>
                     </div>
                     <MoodMessage status={status.status} nombre={planta.nombre} />
-                    <div className="flex items-center gap-3 mt-1.5">
+                    <div className="flex items-center gap-2 sm:gap-3 mt-1">
                       <div className="flex items-center gap-1">
                         <Clock size={10} className="text-gray-400" />
-                        <span className="text-[10px] text-gray-500 font-medium">
+                        <span className="text-[9px] sm:text-[10px] text-gray-500 font-medium">
                           {status.daysSince !== null ? `Hace ${status.daysSince}d` : 'Sin registros'}
                         </span>
                       </div>
                       <div className="flex items-center gap-1">
                         <WaterDrop size={10} />
-                        <span className="text-[10px] text-gray-500 font-medium">Cada {planta.frecuencia_riego_dias}d</span>
+                        <span className="text-[9px] sm:text-[10px] text-gray-500 font-medium">Cada {planta.frecuencia_riego_dias}d</span>
                       </div>
                     </div>
                   </div>
@@ -226,7 +226,7 @@ export default function Dashboard({ onOpenFicha }: Props) {
                       e.stopPropagation();
                       quickWater(planta.nombre);
                     }}
-                    className={`px-3 py-2 rounded-xl text-xs font-bold text-white transition-all btn-cute shadow-lg ${style.btn} flex items-center gap-1`}
+                    className={`px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-xl text-xs font-bold text-white transition-all btn-cute shadow-lg ${style.btn} flex items-center gap-1 flex-shrink-0 active:scale-95`}
                   >
                     <WaterDrop size={14} />
                     <span className="hidden sm:inline">Regar</span>

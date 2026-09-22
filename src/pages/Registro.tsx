@@ -52,18 +52,18 @@ export default function Registro() {
       </div>
 
       {/* Form tabs cute */}
-      <div className="flex gap-2 overflow-x-auto pb-1 px-1">
+      <div className="flex gap-1.5 sm:gap-2 overflow-x-auto pb-1 px-0.5 -mx-1">
         {forms.map(f => (
           <button
             key={f.id}
             onClick={() => setActiveForm(f.id)}
-            className={`flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all duration-300 btn-cute border-2 ${
+            className={`flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs font-bold whitespace-nowrap transition-all duration-300 btn-cute border-2 flex-shrink-0 ${
               activeForm === f.id
                 ? `bg-gradient-to-r ${f.activeGradient} text-white border-white shadow-lg scale-105`
-                : `bg-white text-gray-600 border-gray-100 hover:border-gray-200 shadow-sm`
+                : `bg-white text-gray-600 border-gray-100 hover:border-gray-200 shadow-sm active:scale-95`
             }`}
           >
-            <Icon emoji={f.icon} size={18} />
+            <Icon emoji={f.icon} size={16} />
             {f.label}
           </button>
         ))}
@@ -111,7 +111,7 @@ function FormRiego({ nombres, onSuccess, plantas }: { nombres: string[]; onSucce
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-sm rounded-3xl border-2 border-blue-100 p-5 space-y-5 shadow-cute-lg">
+    <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border-2 border-blue-100 p-4 sm:p-5 space-y-4 sm:space-y-5 shadow-cute-lg">
       <div className="flex items-center gap-2">
         <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-xl flex items-center justify-center shadow-cute">
           <WaterDrop size={18} />
@@ -133,7 +133,7 @@ function FormRiego({ nombres, onSuccess, plantas }: { nombres: string[]; onSucce
         <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
           <Icon emoji="🌱" size={14} /> Planta
         </label>
-        <select value={planta} onChange={e => setPlanta(e.target.value)} className="w-full p-3 rounded-xl border-2 border-blue-100 text-sm bg-blue-50/50 focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none font-medium">
+        <select value={planta} onChange={e => setPlanta(e.target.value)} className="w-full p-2.5 sm:p-3 rounded-lg sm:rounded-xl border-2 border-blue-100 text-sm bg-blue-50/50 focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none font-medium">
           {nombres.map(n => <option key={n} value={n}>{n}</option>)}
         </select>
       </div>
@@ -142,19 +142,19 @@ function FormRiego({ nombres, onSuccess, plantas }: { nombres: string[]; onSucce
         <label className="text-xs font-bold text-gray-600 mb-2 block flex items-center gap-1">
           <TestTube size={14} /> Tipo de riego
         </label>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
           {tipos.map(t => (
             <button
               key={t.name}
               type="button"
               onClick={() => setTipo(t.name)}
-              className={`p-2.5 rounded-xl text-xs font-bold border-2 transition-all btn-cute flex items-center gap-1.5 ${
+              className={`p-2 sm:p-2.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold border-2 transition-all btn-cute flex items-center gap-1 sm:gap-1.5 active:scale-95 ${
                 tipo === t.name 
                   ? 'bg-gradient-to-r from-blue-400 to-cyan-400 text-white border-white shadow-lg scale-[1.02]' 
                   : 'bg-white text-gray-700 border-gray-100 hover:border-blue-200'
               }`}
             >
-              <Icon emoji={t.emoji} size={16} />
+              <Icon emoji={t.emoji} size={14} />
               <span className="truncate">{t.name}</span>
             </button>
           ))}
@@ -194,13 +194,13 @@ function FormRiego({ nombres, onSuccess, plantas }: { nombres: string[]; onSucce
         <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
           <Icon emoji="📅" size={14} /> Fecha
         </label>
-        <input type="date" value={fecha} onChange={e => setFecha(e.target.value)} className="w-full p-3 rounded-xl border-2 border-blue-100 text-sm bg-blue-50/50 focus:ring-2 focus:ring-blue-300 outline-none font-medium" />
+        <input type="date" value={fecha} onChange={e => setFecha(e.target.value)} className="w-full p-2.5 sm:p-3 rounded-lg sm:rounded-xl border-2 border-blue-100 text-sm bg-blue-50/50 focus:ring-2 focus:ring-blue-300 outline-none font-medium" />
       </div>
 
-      <button type="submit" className="w-full py-3.5 bg-gradient-to-r from-blue-400 to-cyan-500 hover:from-blue-500 hover:to-cyan-600 text-white rounded-2xl font-black text-sm transition-all btn-cute shadow-lg shadow-blue-200 border-2 border-white/50 flex items-center justify-center gap-2">
-        <WaterDrop size={20} />
+      <button type="submit" className="w-full py-3 sm:py-3.5 bg-gradient-to-r from-blue-400 to-cyan-500 hover:from-blue-500 hover:to-cyan-600 text-white rounded-xl sm:rounded-2xl font-black text-sm transition-all btn-cute shadow-lg shadow-blue-200 border-2 border-white/50 flex items-center justify-center gap-2 active:scale-[0.98]">
+        <WaterDrop size={18} />
         ¡Registrar Riego!
-        <Icon emoji="✨" size={18} />
+        <Icon emoji="✨" size={16} />
       </button>
     </form>
   );
@@ -224,7 +224,7 @@ function FormCrecimiento({ nombres, onSuccess, plantas }: { nombres: string[]; o
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-sm rounded-3xl border-2 border-green-100 p-5 space-y-5 shadow-cute-lg">
+    <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border-2 border-green-100 p-4 sm:p-5 space-y-4 sm:space-y-5 shadow-cute-lg">
       <div className="flex items-center gap-2">
         <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-emerald-400 rounded-xl flex items-center justify-center shadow-cute">
           <Ruler size={18} />
@@ -322,7 +322,7 @@ function FormSalud({ nombres, onSuccess, plantas }: { nombres: string[]; onSucce
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-sm rounded-3xl border-2 border-orange-100 p-5 space-y-5 shadow-cute-lg">
+    <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border-2 border-orange-100 p-4 sm:p-5 space-y-4 sm:space-y-5 shadow-cute-lg">
       <div className="flex items-center gap-2">
         <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-amber-400 rounded-xl flex items-center justify-center shadow-cute">
           <Bug size={18} />
@@ -353,19 +353,19 @@ function FormSalud({ nombres, onSuccess, plantas }: { nombres: string[]; onSucce
         <label className="text-xs font-bold text-gray-600 mb-2 block flex items-center gap-1">
           <Icon emoji="🔍" size={14} /> Síntoma (toca uno o escribe)
         </label>
-        <div className="flex flex-wrap gap-2 mb-2">
+        <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-2">
           {sintomasRapidos.map(s => (
             <button
               key={s.name}
               type="button"
               onClick={() => setSintoma(s.name)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold border-2 transition-all btn-cute flex items-center gap-1 ${
+              className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold border-2 transition-all btn-cute flex items-center gap-1 active:scale-95 ${
                 sintoma === s.name 
                   ? 'bg-gradient-to-r from-orange-400 to-amber-400 text-white border-white shadow-lg' 
                   : 'bg-white text-gray-700 border-gray-100 hover:border-orange-200'
               }`}
             >
-              <Icon emoji={s.emoji} size={14} />
+              <Icon emoji={s.emoji} size={12} />
               {s.name}
             </button>
           ))}
@@ -441,7 +441,7 @@ function FormCosecha({ nombres, onSuccess, plantas }: { nombres: string[]; onSuc
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-sm rounded-3xl border-2 border-purple-100 p-5 space-y-5 shadow-cute-lg">
+    <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border-2 border-purple-100 p-4 sm:p-5 space-y-4 sm:space-y-5 shadow-cute-lg">
       <div className="flex items-center gap-2">
         <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-400 rounded-xl flex items-center justify-center shadow-cute">
           <Scissors size={18} />
@@ -472,19 +472,19 @@ function FormCosecha({ nombres, onSuccess, plantas }: { nombres: string[]; onSuc
         <label className="text-xs font-bold text-gray-600 mb-2 block flex items-center gap-1">
           <Icon emoji="🌿" size={14} /> Parte cosechada
         </label>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
           {partes.map(p => (
             <button
               key={p.name}
               type="button"
               onClick={() => setParte(p.name)}
-              className={`p-2.5 rounded-xl text-xs font-bold border-2 transition-all btn-cute flex flex-col items-center gap-0.5 ${
+              className={`p-2 sm:p-2.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold border-2 transition-all btn-cute flex flex-col items-center gap-0.5 active:scale-95 ${
                 parte === p.name 
                   ? 'bg-gradient-to-r from-purple-400 to-pink-400 text-white border-white shadow-lg scale-[1.02]' 
                   : 'bg-white text-gray-700 border-gray-100 hover:border-purple-200'
               }`}
             >
-              <Icon emoji={p.emoji} size={20} />
+              <Icon emoji={p.emoji} size={18} />
               <span>{p.name}</span>
             </button>
           ))}

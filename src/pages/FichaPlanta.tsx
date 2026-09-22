@@ -54,34 +54,34 @@ export default function FichaPlanta({ nombre, onBack }: Props) {
       </button>
 
       {/* Hero card */}
-      <div className={`rounded-3xl p-5 shadow-cute-lg border-2 border-white sticker animate-bounce-in ${
+      <div className={`rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-cute-lg border-2 border-white sticker animate-bounce-in ${
         faceStatus === 'happy' ? 'bg-gradient-to-br from-green-100 via-emerald-50 to-teal-50' :
         faceStatus === 'thirsty' ? 'bg-gradient-to-br from-yellow-100 via-amber-50 to-orange-50' :
         'bg-gradient-to-br from-red-100 via-pink-50 to-rose-50'
       }`}>
-        <div className="flex items-center gap-4">
-          <div className="relative">
-            <div className={`w-20 h-20 rounded-2xl flex items-center justify-center shadow-cute ${
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="relative flex-shrink-0">
+            <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-cute ${
               faceStatus === 'happy' ? 'bg-green-200/50' :
               faceStatus === 'thirsty' ? 'bg-yellow-200/50' :
               'bg-red-200/50'
             }`}>
-              <Icon emoji={planta.emoji} size={50} className="animate-float" />
+              <Icon emoji={planta.emoji} size={40} className="animate-float" />
             </div>
-            <div className={`absolute -bottom-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center border-2 border-white shadow-cute ${
+            <div className={`absolute -bottom-1 -right-1 w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center border-2 border-white shadow-cute ${
               faceStatus === 'happy' ? 'bg-green-300' :
               faceStatus === 'thirsty' ? 'bg-yellow-300' :
               'bg-red-300'
             }`}>
-              <Icon emoji={faceStatus === 'happy' ? '😊' : faceStatus === 'thirsty' ? '😅' : '🥺'} size={18} />
+              <Icon emoji={faceStatus === 'happy' ? '😊' : faceStatus === 'thirsty' ? '😅' : '🥺'} size={14} />
             </div>
           </div>
           
-          <div className="flex-1">
-            <h2 className="text-2xl font-black text-gray-900">{planta.nombre}</h2>
-            <p className="text-sm text-gray-600 font-medium">{planta.fase_actual}</p>
-            <div className="flex items-center gap-2 mt-2">
-              <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold text-white ${
+          <div className="flex-1 min-w-0">
+            <h2 className="text-xl sm:text-2xl font-black text-gray-900 truncate">{planta.nombre}</h2>
+            <p className="text-xs sm:text-sm text-gray-600 font-medium truncate">{planta.fase_actual}</p>
+            <div className="flex items-center gap-2 mt-1.5 sm:mt-2">
+              <span className={`text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full font-bold text-white flex-shrink-0 ${
                 faceStatus === 'happy' ? 'bg-green-500' :
                 faceStatus === 'thirsty' ? 'bg-yellow-500' :
                 'bg-red-500'
@@ -92,14 +92,14 @@ export default function FichaPlanta({ nombre, onBack }: Props) {
           </div>
         </div>
         
-        <div className={`mt-4 p-3 rounded-2xl border ${
+        <div className={`mt-3 sm:mt-4 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl border ${
           faceStatus === 'happy' ? 'bg-green-50/80 border-green-200' :
           faceStatus === 'thirsty' ? 'bg-yellow-50/80 border-yellow-200' :
           'bg-red-50/80 border-red-200'
         }`}>
           <div className="flex items-center gap-2">
-            <WaterDrop size={14} />
-            <span className="text-xs font-bold text-gray-700">
+            <WaterDrop size={12} className="flex-shrink-0" />
+            <span className="text-[11px] sm:text-xs font-bold text-gray-700">
               {diasDesdeRiego !== null
                 ? `Último riego: hace ${diasDesdeRiego} día(s) | Frecuencia: cada ${planta.frecuencia_riego_dias}d`
                 : 'Sin registros de riego aún'}
@@ -109,18 +109,18 @@ export default function FichaPlanta({ nombre, onBack }: Props) {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1.5 overflow-x-auto pb-1 px-0.5">
+      <div className="flex gap-1 sm:gap-1.5 overflow-x-auto pb-1 px-0.5 -mx-1">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-300 btn-cute border-2 ${
+            className={`flex items-center gap-0.5 sm:gap-1 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold whitespace-nowrap transition-all duration-300 btn-cute border-2 flex-shrink-0 active:scale-95 ${
               activeTab === tab.id 
                 ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-white border-white shadow-lg shadow-green-200 scale-105' 
                 : 'bg-white text-gray-600 border-gray-100 hover:border-green-200 shadow-sm'
             }`}
           >
-            <Icon emoji={tab.emoji} size={14} /> {tab.label}
+            <Icon emoji={tab.emoji} size={12} /> {tab.label}
           </button>
         ))}
       </div>

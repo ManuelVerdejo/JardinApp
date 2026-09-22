@@ -72,29 +72,31 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50/50 to-yellow-50/30 pb-24 max-w-lg mx-auto bg-pattern">
       {/* Header cute */}
-      <header className="sticky top-0 z-40 glass-strong px-4 py-3 border-b border-white/50">
+      <header className="sticky top-0 z-40 glass-strong px-3 sm:px-4 py-2.5 sm:py-3 border-b border-white/50">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2 sm:gap-2.5">
             <div className="relative">
-              <Seedling size={28} className="animate-wiggle" />
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-pink-400 rounded-full animate-pulse-soft"></div>
+              <Seedling size={24} className="animate-wiggle sm:hidden" />
+              <Seedling size={28} className="animate-wiggle hidden sm:block" />
+              <div className="absolute -top-1 -right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-pink-400 rounded-full animate-pulse-soft"></div>
             </div>
             <div>
-              <h1 className="text-lg font-black text-green-900 leading-tight">Mi Huerto</h1>
-              <p className="text-[10px] text-green-600 font-medium -mt-0.5">Tu jardín feliz</p>
+              <h1 className="text-base sm:text-lg font-black text-green-900 leading-tight">Mi Huerto</h1>
+              <p className="text-[9px] sm:text-[10px] text-green-600 font-medium -mt-0.5">Tu jardín feliz</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className="glass px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-cute">
-              <SparklesIcon size={12} className="text-yellow-500" />
-              <span className="text-[10px] font-bold text-green-700">Offline</span>
+            <div className="glass px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full flex items-center gap-1 sm:gap-1.5 shadow-cute">
+              <SparklesIcon size={10} className="text-yellow-500 sm:hidden" />
+              <SparklesIcon size={12} className="text-yellow-500 hidden sm:block" />
+              <span className="text-[9px] sm:text-[10px] font-bold text-green-700">Offline</span>
             </div>
           </div>
         </div>
       </header>
 
       {/* Content */}
-      <main className="px-4 py-4 animate-fade-in">
+      <main className="px-3 sm:px-4 py-3 sm:py-4 pb-24 animate-fade-in">
         {activeTab === 'dashboard' && <Dashboard onOpenFicha={openFicha} />}
         {activeTab === 'registro' && <Registro />}
         {activeTab === 'analisis' && <Analisis />}
@@ -103,8 +105,8 @@ export default function App() {
 
       {/* Bottom Navigation cute */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 safe-bottom">
-        <div className="max-w-lg mx-auto px-3 pb-2">
-          <div className="glass-strong rounded-2xl shadow-cute-lg border border-white/60 px-2 py-2 flex justify-around items-center">
+        <div className="max-w-lg mx-auto px-2 sm:px-3 pb-1 sm:pb-2">
+          <div className="glass-strong rounded-2xl shadow-cute-lg border border-white/60 px-1 sm:px-2 py-1.5 sm:py-2 flex justify-around items-center">
             <NavButton label="Inicio" iconKey="home" active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} color="green" />
             <NavButton label="Registro" iconKey="pencil" active={activeTab === 'registro'} onClick={() => setActiveTab('registro')} color="pink" />
             <NavButton label="Análisis" iconKey="chart" active={activeTab === 'analisis'} onClick={() => setActiveTab('analisis')} color="purple" />
@@ -146,12 +148,12 @@ function NavButton({ label, iconKey, active, onClick, color }: {
   return (
     <button
       onClick={onClick}
-      className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl transition-all duration-300 btn-cute ${
-        active ? `${colors[color]} scale-105` : 'hover:bg-gray-100/50'
+      className={`flex flex-col items-center gap-0.5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl transition-all duration-300 btn-cute min-w-[60px] ${
+        active ? `${colors[color]} scale-105` : 'hover:bg-gray-100/50 active:bg-gray-100'
       }`}
     >
-      <span className="text-base">{active ? <Icon emoji={inlineIcons[iconKey]} size={20} /> : icons[iconKey]}</span>
-      <span className={`text-[10px] font-bold ${active ? 'text-white' : 'text-gray-500'}`}>{label}</span>
+      <span className="text-base leading-none">{active ? <Icon emoji={inlineIcons[iconKey]} size={20} /> : icons[iconKey]}</span>
+      <span className={`text-[10px] font-bold leading-tight ${active ? 'text-white' : 'text-gray-500'}`}>{label}</span>
     </button>
   );
 }
@@ -262,65 +264,79 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[60] bg-black/30 backdrop-blur-sm flex items-end justify-center" onClick={onClose}>
-      <div className="bg-white/95 backdrop-blur-xl rounded-t-3xl w-full max-w-lg p-6 pb-8 animate-slide-up border-t border-white/50" onClick={e => e.stopPropagation()}>
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <Save size={28} className="text-blue-500" />
-            <h2 className="text-xl font-black text-gray-900">Gestión de Datos</h2>
+    <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm flex items-end justify-center" onClick={onClose}>
+      <div 
+        className="bg-white/95 backdrop-blur-xl rounded-t-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-slide-up border-t-2 border-white/50 shadow-2xl"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Handle de arrastre */}
+        <div className="sticky top-0 bg-white/95 backdrop-blur-xl pt-3 pb-2 px-6 border-b border-gray-100 z-10">
+          <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-3"></div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Save size={24} className="text-blue-500" />
+              <h2 className="text-lg font-black text-gray-900">Gestión de Datos</h2>
+            </div>
+            <button 
+              onClick={onClose} 
+              className="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-600 transition-all btn-cute active:scale-95"
+              aria-label="Cerrar"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
           </div>
-          <button onClick={onClose} className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-200 transition-colors btn-cute">
-            ×
-          </button>
         </div>
         
-        <div className="space-y-3">
+        <div className="p-4 pb-6 space-y-3">
           <button
             onClick={() => exportData('json')}
-            className="w-full flex items-center gap-3 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border-2 border-green-200 hover:border-green-300 transition-all btn-cute shadow-cute"
+            className="w-full flex items-center gap-3 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border-2 border-green-200 hover:border-green-300 transition-all btn-cute shadow-cute active:scale-[0.98]"
           >
             <Package size={32} />
-            <div className="text-left">
-              <p className="font-bold text-green-900">Exportar JSON</p>
+            <div className="text-left flex-1 min-w-0">
+              <p className="font-bold text-green-900 text-sm">Exportar JSON</p>
               <p className="text-xs text-green-700">Backup completo de todos los datos</p>
             </div>
           </button>
           
           <button
             onClick={() => exportData('csv')}
-            className="w-full flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl border-2 border-blue-200 hover:border-blue-300 transition-all btn-cute shadow-cute"
+            className="w-full flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl border-2 border-blue-200 hover:border-blue-300 transition-all btn-cute shadow-cute active:scale-[0.98]"
           >
             <Chart size={32} />
-            <div className="text-left">
-              <p className="font-bold text-blue-900">Exportar CSV</p>
+            <div className="text-left flex-1 min-w-0">
+              <p className="font-bold text-blue-900 text-sm">Exportar CSV</p>
               <p className="text-xs text-blue-700">Compatible con Excel y hojas de cálculo</p>
             </div>
           </button>
           
           <button
             onClick={importData}
-            className="w-full flex items-center gap-3 p-4 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-2xl border-2 border-amber-200 hover:border-amber-300 transition-all btn-cute shadow-cute"
+            className="w-full flex items-center gap-3 p-4 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-2xl border-2 border-amber-200 hover:border-amber-300 transition-all btn-cute shadow-cute active:scale-[0.98]"
           >
             <Download size={32} />
-            <div className="text-left">
-              <p className="font-bold text-amber-900">Importar JSON</p>
+            <div className="text-left flex-1 min-w-0">
+              <p className="font-bold text-amber-900 text-sm">Importar JSON</p>
               <p className="text-xs text-amber-700">Restaurar desde un backup anterior</p>
             </div>
           </button>
           
           <button
             onClick={resetData}
-            className="w-full flex items-center gap-3 p-4 bg-gradient-to-r from-red-50 to-pink-50 rounded-2xl border-2 border-red-200 hover:border-red-300 transition-all btn-cute shadow-cute"
+            className="w-full flex items-center gap-3 p-4 bg-gradient-to-r from-red-50 to-pink-50 rounded-2xl border-2 border-red-200 hover:border-red-300 transition-all btn-cute shadow-cute active:scale-[0.98]"
           >
             <Refresh size={32} />
-            <div className="text-left">
-              <p className="font-bold text-red-900">Reiniciar datos</p>
+            <div className="text-left flex-1 min-w-0">
+              <p className="font-bold text-red-900 text-sm">Reiniciar datos</p>
               <p className="text-xs text-red-700">Volver a los datos de ejemplo</p>
             </div>
           </button>
         </div>
 
-        <div className="mt-6 text-center">
+        <div className="pb-6 text-center">
           <p className="text-xs text-gray-400">Hecho con 💚 para tu huerto</p>
         </div>
       </div>

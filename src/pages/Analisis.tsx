@@ -124,16 +124,16 @@ export default function Analisis() {
       </div>
 
       {/* Gráfico de Crecimiento */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-3xl border-2 border-green-100 p-4 shadow-cute-lg animate-fade-in">
-        <h3 className="font-black text-gray-800 text-sm flex items-center gap-2 mb-3">
-          <div className="w-7 h-7 bg-gradient-to-br from-green-400 to-emerald-400 rounded-xl flex items-center justify-center shadow-cute">
-            <TrendingUp size={14} className="text-white" />
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border-2 border-green-100 p-3 sm:p-4 shadow-cute-lg animate-fade-in">
+        <h3 className="font-black text-gray-800 text-xs sm:text-sm flex items-center gap-2 mb-2 sm:mb-3">
+          <div className="w-6 h-6 sm:w-7 sm:h-7 bg-gradient-to-br from-green-400 to-emerald-400 rounded-lg sm:rounded-xl flex items-center justify-center shadow-cute">
+            <TrendingUp size={12} className="text-white" />
           </div>
-          Evolución del Crecimiento
+          <span className="truncate">Evolución del Crecimiento</span>
           <Icon emoji="📈" size={14} />
         </h3>
         {crecimientoData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={200}>
+          <ResponsiveContainer width="100%" height={180}>
             <LineChart data={crecimientoData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" strokeOpacity={0.5} />
               <XAxis dataKey="fecha" tick={{ fontSize: 10, fill: '#6b7280' }} />
@@ -160,15 +160,15 @@ export default function Analisis() {
       </div>
 
       {/* Gráfico de Riegos */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-3xl border-2 border-blue-100 p-4 shadow-cute-lg animate-fade-in">
-        <h3 className="font-black text-gray-800 text-sm flex items-center gap-2 mb-3">
-          <div className="w-7 h-7 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-xl flex items-center justify-center shadow-cute">
-            <WaterDrop size={14} />
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border-2 border-blue-100 p-3 sm:p-4 shadow-cute-lg animate-fade-in">
+        <h3 className="font-black text-gray-800 text-xs sm:text-sm flex items-center gap-2 mb-2 sm:mb-3">
+          <div className="w-6 h-6 sm:w-7 sm:h-7 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-lg sm:rounded-xl flex items-center justify-center shadow-cute">
+            <WaterDrop size={12} />
           </div>
-          Frecuencia de Riego
+          <span className="truncate">Frecuencia de Riego</span>
           <Icon emoji="💧" size={14} />
         </h3>
-        <ResponsiveContainer width="100%" height={160}>
+        <ResponsiveContainer width="100%" height={140}>
           <BarChart data={riegoData}>
             <defs>
               <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
@@ -186,16 +186,16 @@ export default function Analisis() {
       </div>
 
       {/* Gráfico de Cosechas */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-3xl border-2 border-purple-100 p-4 shadow-cute-lg animate-fade-in">
-        <h3 className="font-black text-gray-800 text-sm flex items-center gap-2 mb-3">
-          <div className="w-7 h-7 bg-gradient-to-br from-purple-400 to-pink-400 rounded-xl flex items-center justify-center shadow-cute">
-            <Scissors size={14} />
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border-2 border-purple-100 p-3 sm:p-4 shadow-cute-lg animate-fade-in">
+        <h3 className="font-black text-gray-800 text-xs sm:text-sm flex items-center gap-2 mb-2 sm:mb-3">
+          <div className="w-6 h-6 sm:w-7 sm:h-7 bg-gradient-to-br from-purple-400 to-pink-400 rounded-lg sm:rounded-xl flex items-center justify-center shadow-cute">
+            <Scissors size={12} />
           </div>
-          Balance de Cosechas
+          <span className="truncate">Balance de Cosechas</span>
           <Icon emoji="🎉" size={14} />
         </h3>
         {cosechaData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={180}>
+          <ResponsiveContainer width="100%" height={160}>
             <BarChart data={cosechaData} layout="vertical">
               <defs>
                 <linearGradient id="barPurple" x1="0" y1="0" x2="1" y2="0">
@@ -219,16 +219,16 @@ export default function Analisis() {
       </div>
 
       {/* Tasa de resolución de salud */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-3xl border-2 border-pink-100 p-4 shadow-cute-lg animate-fade-in">
-        <h3 className="font-black text-gray-800 text-sm flex items-center gap-2 mb-3">
-          <div className="w-7 h-7 bg-gradient-to-br from-pink-400 to-rose-400 rounded-xl flex items-center justify-center shadow-cute">
-            <Heart size={14} className="text-white" />
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border-2 border-pink-100 p-3 sm:p-4 shadow-cute-lg animate-fade-in">
+        <h3 className="font-black text-gray-800 text-xs sm:text-sm flex items-center gap-2 mb-2 sm:mb-3">
+          <div className="w-6 h-6 sm:w-7 sm:h-7 bg-gradient-to-br from-pink-400 to-rose-400 rounded-lg sm:rounded-xl flex items-center justify-center shadow-cute">
+            <Heart size={12} className="text-white" />
           </div>
-          Salud del Huerto
+          <span className="truncate">Salud del Huerto</span>
           <HeartGreen size={14} />
         </h3>
-        <div className="flex items-center gap-5">
-          <div className="w-28 h-28 relative">
+        <div className="flex items-center gap-3 sm:gap-5">
+          <div className="w-24 h-24 sm:w-28 sm:h-28 relative flex-shrink-0">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie data={saludData} cx="50%" cy="50%" innerRadius={30} outerRadius={48} dataKey="value" strokeWidth={3} stroke="#fff">
