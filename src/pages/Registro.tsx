@@ -52,19 +52,19 @@ export default function Registro() {
       </div>
 
       {/* Form tabs cute */}
-      <div className="flex gap-1.5 sm:gap-2 overflow-x-auto pb-1 px-0.5 -mx-1">
+      <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
         {forms.map(f => (
           <button
             key={f.id}
             onClick={() => setActiveForm(f.id)}
-            className={`flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs font-bold whitespace-nowrap transition-all duration-300 btn-cute border-2 flex-shrink-0 ${
+            className={`flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 px-2 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs font-bold transition-all duration-300 btn-cute border-2 ${
               activeForm === f.id
                 ? `bg-gradient-to-r ${f.activeGradient} text-white border-white shadow-lg scale-105`
                 : `bg-white text-gray-600 border-gray-100 hover:border-gray-200 shadow-sm active:scale-95`
             }`}
           >
             <Icon emoji={f.icon} size={16} />
-            {f.label}
+            <span className="text-[11px] sm:text-xs">{f.label}</span>
           </button>
         ))}
       </div>

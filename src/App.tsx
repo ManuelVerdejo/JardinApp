@@ -280,27 +280,36 @@ function SettingsPanel({ onClose, isDark }: { onClose: () => void; isDark: boole
   return (
     <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm flex items-end justify-center" onClick={onClose}>
       <div 
-        className={`rounded-t-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-slide-up shadow-2xl ${
+        className={`rounded-t-3xl w-full max-w-lg max-h-[85vh] overflow-y-auto animate-slide-up shadow-2xl ${
           isDark ? 'bg-gray-800/95 border-t-2 border-gray-700' : 'bg-white/95 border-t-2 border-white/50'
         } backdrop-blur-xl`}
         onClick={e => e.stopPropagation()}
       >
-        <div className={`sticky top-0 pt-3 pb-2 px-6 border-b z-10 ${
+        <div className={`sticky top-0 pt-4 pb-3 px-4 sm:px-6 border-b z-10 ${
           isDark ? 'bg-gray-800/95 border-gray-700' : 'bg-white/95 border-gray-100'
         } backdrop-blur-xl`}>
           <div className={`w-12 h-1.5 rounded-full mx-auto mb-3 ${isDark ? 'bg-gray-600' : 'bg-gray-300'}`}></div>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Save size={24} className={isDark ? 'text-blue-400' : 'text-blue-500'} />
-              <h2 className={`text-lg font-black ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>Gestión de Datos</h2>
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              <Save size={24} className={isDark ? 'text-blue-400' : 'text-blue-500'} flex-shrink-0 />
+              <h2 className={`text-base sm:text-lg font-black truncate ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>Gestión de Datos</h2>
             </div>
             <button 
-              onClick={onClose} 
-              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all btn-cute active:scale-95 ${
+              onClick={(e) => {
+                e.stopPropagation();
+                onClose();
+              }}
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onClose();
+              }}
+              className={`w-11 h-11 rounded-full flex items-center justify-center transition-all btn-cute active:scale-95 flex-shrink-0 ${
                 isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
+              aria-label="Cerrar"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>

@@ -227,11 +227,11 @@ export default function Analisis() {
           <span className="truncate">Salud del Huerto</span>
           <HeartGreen size={14} />
         </h3>
-        <div className="flex items-center gap-3 sm:gap-5">
-          <div className="w-24 h-24 sm:w-28 sm:h-28 relative flex-shrink-0">
+        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5">
+          <div className="w-32 h-32 sm:w-28 sm:h-28 relative flex-shrink-0">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={saludData} cx="50%" cy="50%" innerRadius={30} outerRadius={48} dataKey="value" strokeWidth={3} stroke="#fff">
+                <Pie data={saludData} cx="50%" cy="50%" innerRadius={35} outerRadius={55} dataKey="value" strokeWidth={3} stroke="#fff">
                   {saludData.map((entry, index) => (
                     <Cell key={index} fill={entry.color} />
                   ))}
@@ -243,15 +243,15 @@ export default function Analisis() {
               <span className="text-[9px] text-gray-500 font-bold">sano</span>
             </div>
           </div>
-          <div className="flex-1 space-y-3">
+          <div className="flex-1 w-full space-y-2">
             {saludData.map((d, i) => (
               <div key={i} className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2">
-                <div className="w-4 h-4 rounded-full shadow-sm" style={{ backgroundColor: d.color }}></div>
-                <span className="text-xs font-bold text-gray-700">{d.name}</span>
-                <span className="ml-auto text-sm font-black" style={{ color: d.color }}>{d.value}</span>
+                <div className="w-4 h-4 rounded-full shadow-sm flex-shrink-0" style={{ backgroundColor: d.color }}></div>
+                <span className="text-xs font-bold text-gray-700 flex-1">{d.name}</span>
+                <span className="text-sm font-black flex-shrink-0" style={{ color: d.color }}>{d.value}</span>
               </div>
             ))}
-            <p className="text-[10px] text-gray-400 font-medium text-center">
+            <p className="text-[10px] text-gray-400 font-medium text-center pt-1">
               Total: {totalSalud} incidencias
             </p>
           </div>
