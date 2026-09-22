@@ -13,6 +13,18 @@ export interface Planta {
   prohibiciones: string;
   emoji: string;
   color: string;
+  tipo_planta?: 'aromatica' | 'hortaliza' | 'fruta' | 'flor' | 'otro';
+}
+
+export interface PlanFertilizacion {
+  id?: number;
+  planta_nombre: string;
+  fertilizante_nombre: string;
+  frecuencia_dias: number;
+  ultima_aplicacion: string;
+  proxima_aplicacion: string;
+  activo: boolean;
+  notas: string;
 }
 
 export interface Riego {
@@ -69,16 +81,18 @@ export class HuertoDB extends Dexie {
   salud!: Table<SaludVegetal, number>;
   cosechas!: Table<Cosecha, number>;
   fertilizantes!: Table<Fertilizante, number>;
+  planesFertilizacion!: Table<PlanFertilizacion, number>;
 
   constructor() {
     super('HuertoUrbanoDB');
-    this.version(2).stores({
+    this.version(3).stores({
       plantas: '++planta_id, nombre',
       riegos: '++id, planta_nombre, fecha',
       bitacora: '++id, planta_nombre, fecha',
       salud: '++id, planta_nombre, fecha_deteccion, estado',
       cosechas: '++id, planta_nombre, fecha',
       fertilizantes: '++id, nombre, fecha_creacion',
+      planesFertilizacion: '++id, planta_nombre, fertilizante_nombre',
     });
   }
 }

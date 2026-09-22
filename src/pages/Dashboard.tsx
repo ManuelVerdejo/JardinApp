@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
-import type { Planta } from '../db/database';
+import type { Planta, PlanFertilizacion } from '../db/database';
 import { PlantFace, MoodMessage } from '../components/PlantFace';
 import { useConfetti, ConfettiOverlay } from '../components/Confetti';
 import StreakBadge from '../components/StreakBadge';
@@ -17,6 +17,7 @@ import { WaterDrop, Rainbow, Alert } from '../components/Icons';
 import { useTheme } from '../context/ThemeContext';
 import { Clock, Info, Plus } from 'lucide-react';
 import { AddPlantModal } from '../components/AddPlantModal';
+import { esMomentoDeFertilizar, getDiasRestantes } from '../utils/fertilizerRecommendations';
 
 interface Props {
   onOpenFicha: (nombre: string) => void;
@@ -26,6 +27,7 @@ export default function Dashboard({ onOpenFicha }: Props) {
   const plantas = useLiveQuery(() => db.plantas.toArray()) || [];
   const riegos = useLiveQuery(() => db.riegos.toArray()) || [];
   const alertasSalud = useLiveQuery(() => db.salud.where('estado').equals('En seguimiento').toArray()) || [];
+  const planesFertilizacion = useLiveQuery(() => db.planesFertilizacion.where('activo').equals(1).toArray()) || [];
   const [refreshKey, setRefreshKey] = useState(0);
   const { pieces, trigger: triggerConfetti } = useConfetti();
   const [justWatered, setJustWatered] = useState<string | null>(null);
@@ -54,6 +56,20 @@ export default function Dashboard({ onOpenFicha }: Props) {
     setJustWatered(plantaNombre);
     triggerConfetti();
     setTimeout(() => setJustWatered(null), 1500);
+    setRefreshKey(k => k + 1);
+  };
+
+  const quickFertilize = async (plan: PlanFertilizacion) => {
+    const hoy = new Date().toISOString().split('T')[0];
+    const proximaAplicacion = new Date();
+    proximaAplicacion.setDate(proximaAplicacion.getDate() + plan.frecuencia_dias);
+    
+    await db.planesFertilizacion.update(plan.id!, {
+      ultima_aplicacion: hoy,
+      proxima_aplicacion: proximaAplicacion.toISOString().split('T')[0]
+    });
+    
+    triggerConfetti();
     setRefreshKey(k => k + 1);
   };
 
@@ -183,6 +199,58 @@ export default function Dashboard({ onOpenFicha }: Props) {
                 <span className="text-xs text-amber-600 truncate">{s.sintoma_riesgo}</span>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Alertas de fertilización */}
+      {planesFertilizacion.filter(p => esMomentoDeFertilizar(p.proxima_aplicacion)).length > 0 && (
+        <div className={`rounded-2xl p-4 shadow-cute animate-fade-in border-2 ${
+          isDark ? 'bg-gradient-to-r from-orange-900/30 to-red-900/30 border-orange-800' : 'bg-gradient-to-r from-orange-50 to-red-50 border-orange-200'
+        }`}>
+          <div className="flex items-center gap-2 mb-2">
+            <div className={`w-7 h-7 rounded-full flex items-center justify-center ${
+              isDark ? 'bg-orange-800' : 'bg-orange-200'
+            }`}>
+              <Icon emoji="🧪" size={14} />
+            </div>
+            <span className={`text-sm font-black ${isDark ? 'text-orange-300' : 'text-orange-800'}`}>
+              Fertilización Pendiente
+            </span>
+            <span className={`ml-auto text-xs font-bold px-2 py-0.5 rounded-full ${
+              isDark ? 'bg-orange-800 text-orange-300' : 'bg-orange-200 text-orange-800'
+            }`}>
+              {planesFertilizacion.filter(p => esMomentoDeFertilizar(p.proxima_aplicacion)).length}
+            </span>
+          </div>
+          <div className="space-y-1.5">
+            {planesFertilizacion
+              .filter(p => esMomentoDeFertilizar(p.proxima_aplicacion))
+              .slice(0, 3)
+              .map((p, i) => (
+                <div key={i} className={`flex items-center gap-2 rounded-xl px-3 py-1.5 ${
+                  isDark ? 'bg-gray-800/60' : 'bg-white/60'
+                }`}>
+                  <Icon emoji={plantas.find(pl => pl.nombre === p.planta_nombre)?.emoji || '🌱'} size={16} />
+                  <span className={`text-xs font-bold ${isDark ? 'text-orange-300' : 'text-orange-800'}`}>
+                    {p.planta_nombre}
+                  </span>
+                  <Icon emoji={p.fertilizante_nombre} size={14} />
+                  <span className={`text-xs truncate flex-1 ${isDark ? 'text-orange-400' : 'text-orange-600'}`}>
+                    {p.fertilizante_nombre}
+                  </span>
+                  <button
+                    onClick={() => quickFertilize(p)}
+                    className={`px-2 py-1 rounded-lg text-[10px] font-bold transition-all ${
+                      isDark 
+                        ? 'bg-green-600 text-white hover:bg-green-500' 
+                        : 'bg-green-500 text-white hover:bg-green-600'
+                    }`}
+                  >
+                    Aplicar
+                  </button>
+                </div>
+              ))}
           </div>
         </div>
       )}

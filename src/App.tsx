@@ -10,6 +10,7 @@ import { Achievements } from './components/Achievements';
 import { VirtualGarden } from './components/VirtualGarden';
 import { InfographicGenerator } from './components/InfographicGenerator';
 import { FertilizerInventory } from './components/FertilizerInventory';
+import { FertilizationPlan } from './components/FertilizationPlan';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { FontSizeProvider } from './context/FontSizeContext';
 import { ThemeToggle } from './components/ThemeToggle';
@@ -17,9 +18,9 @@ import { FontSizeControl } from './components/FontSizeControl';
 import { LoadingAnimation } from './components/LoadingAnimation';
 import { Icon } from './components/Icon';
 import { Seedling, Sparkles as SparklesIcon, Package, Chart, Download, Refresh } from './components/Icons';
-import { Home, Plus, BarChart3, Save, Calendar as CalendarIcon, Trophy, Flower2, FileText, FlaskConical } from 'lucide-react';
+import { Home, Plus, BarChart3, Save, Calendar as CalendarIcon, Trophy, Flower2, FileText, FlaskConical, CalendarDays } from 'lucide-react';
 
-type TabType = 'dashboard' | 'registro' | 'analisis' | 'ficha' | 'calendar' | 'achievements' | 'garden' | 'infographic' | 'fertilizers' | 'settings';
+type TabType = 'dashboard' | 'registro' | 'analisis' | 'ficha' | 'calendar' | 'achievements' | 'garden' | 'infographic' | 'fertilizers' | 'fertilization-plan' | 'settings';
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
@@ -99,6 +100,7 @@ function AppContent() {
         {activeTab === 'garden' && <VirtualGarden />}
         {activeTab === 'infographic' && <InfographicGenerator />}
         {activeTab === 'fertilizers' && <FertilizerInventory />}
+        {activeTab === 'fertilization-plan' && <FertilizationPlan />}
       </main>
 
       {/* Bottom Navigation */}
@@ -110,6 +112,7 @@ function AppContent() {
             <NavButton label="Inicio" iconKey="home" active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} color="green" isDark={isDark} />
             <NavButton label="Calendario" iconKey="calendar" active={activeTab === 'calendar'} onClick={() => setActiveTab('calendar')} color="indigo" isDark={isDark} />
             <NavButton label="Fertilizantes" iconKey="fertilizers" active={activeTab === 'fertilizers'} onClick={() => setActiveTab('fertilizers')} color="blue" isDark={isDark} />
+            <NavButton label="Plan" iconKey="fertilization-plan" active={activeTab === 'fertilization-plan'} onClick={() => setActiveTab('fertilization-plan')} color="orange" isDark={isDark} />
             <NavButton label="Logros" iconKey="trophy" active={activeTab === 'achievements'} onClick={() => setActiveTab('achievements')} color="yellow" isDark={isDark} />
             <NavButton label="Jardín" iconKey="garden" active={activeTab === 'garden'} onClick={() => setActiveTab('garden')} color="pink" isDark={isDark} />
           </div>
@@ -122,7 +125,7 @@ function AppContent() {
 }
 
 function NavButton({ label, iconKey, active, onClick, color, isDark }: { 
-  label: string; iconKey: 'home' | 'calendar' | 'trophy' | 'garden' | 'infographic' | 'fertilizers'; active: boolean; onClick: () => void; color: string; isDark: boolean;
+  label: string; iconKey: 'home' | 'calendar' | 'trophy' | 'garden' | 'infographic' | 'fertilizers' | 'fertilization-plan'; active: boolean; onClick: () => void; color: string; isDark: boolean;
 }) {
   const icons = {
     home: <Home size={20} />,
@@ -131,6 +134,7 @@ function NavButton({ label, iconKey, active, onClick, color, isDark }: {
     garden: <Flower2 size={20} />,
     infographic: <FileText size={20} />,
     fertilizers: <FlaskConical size={20} />,
+    'fertilization-plan': <CalendarDays size={20} />,
   };
 
   const inlineIcons = {
@@ -140,6 +144,7 @@ function NavButton({ label, iconKey, active, onClick, color, isDark }: {
     garden: '🏡',
     infographic: '📊',
     fertilizers: '🧪',
+    'fertilization-plan': '📆',
   };
 
   const colors: Record<string, string> = {
@@ -149,6 +154,7 @@ function NavButton({ label, iconKey, active, onClick, color, isDark }: {
     pink: active ? 'bg-gradient-to-br from-pink-400 to-rose-500 text-white shadow-lg shadow-pink-200/50' : isDark ? 'text-gray-400' : 'text-gray-500',
     blue: active ? 'bg-gradient-to-br from-blue-400 to-cyan-500 text-white shadow-lg shadow-blue-200/50' : isDark ? 'text-gray-400' : 'text-gray-500',
     purple: active ? 'bg-gradient-to-br from-purple-400 to-violet-500 text-white shadow-lg shadow-purple-200/50' : isDark ? 'text-gray-400' : 'text-gray-500',
+    orange: active ? 'bg-gradient-to-br from-orange-400 to-red-500 text-white shadow-lg shadow-orange-200/50' : isDark ? 'text-gray-400' : 'text-gray-500',
   };
 
   return (
