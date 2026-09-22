@@ -12,18 +12,39 @@ export function Icon({ emoji, size = 24, className = '' }: Props) {
   const IconComponent = iconMap[emoji];
   
   if (IconComponent) {
-    return <IconComponent size={size} className={className} />;
+    return (
+      <span 
+        className={`inline-flex items-center justify-center ${className}`}
+        style={{ 
+          width: size, 
+          height: size, 
+          display: 'inline-flex',
+          flexShrink: 0,
+        }}
+      >
+        <IconComponent size={size} />
+      </span>
+    );
   }
   
   // Fallback: renderizar el emoji si no hay SVG disponible
-  return <span className={className} style={{ fontSize: size * 0.75 }}>{emoji}</span>;
+  return (
+    <span 
+      className={`inline-flex items-center justify-center ${className}`}
+      style={{ 
+        width: size, 
+        height: size,
+        fontSize: size * 0.7,
+        display: 'inline-flex',
+        flexShrink: 0,
+      }}
+    >
+      {emoji}
+    </span>
+  );
 }
 
 // Componente inline para usar dentro de texto
 export function IconInline({ emoji, size = 16, className = '' }: Props) {
-  return (
-    <span className={`inline-flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
-      <Icon emoji={emoji} size={size} />
-    </span>
-  );
+  return <Icon emoji={emoji} size={size} className={className} />;
 }

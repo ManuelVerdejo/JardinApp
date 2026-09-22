@@ -538,6 +538,33 @@ export const Tear = ({ size = 24, className = '' }: IconProps) => (
   </svg>
 );
 
+// ============ ICONOS ADICIONALES ============
+export const ChartUp = ({ size = 24, className = '' }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 64 64" className={className} fill="none">
+    <path d="M8 56L24 36L36 44L56 16" stroke="#16a34a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M48 16H56V24" stroke="#16a34a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+export const FaceCry = ({ size = 24, className = '' }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 64 64" className={className} fill="none">
+    <circle cx="32" cy="32" r="24" fill="#fde68a" stroke="#f59e0b" strokeWidth="2"/>
+    <path d="M20 26C20 26 22 24 26 26" stroke="#1f2937" strokeWidth="2.5" strokeLinecap="round"/>
+    <path d="M38 26C38 26 40 24 44 26" stroke="#1f2937" strokeWidth="2.5" strokeLinecap="round"/>
+    <circle cx="24" cy="30" r="2.5" fill="#1f2937"/>
+    <circle cx="40" cy="30" r="2.5" fill="#1f2937"/>
+    <path d="M24 42C24 42 28 38 32 38C36 38 40 42 40 42" stroke="#1f2937" strokeWidth="2.5" strokeLinecap="round"/>
+    <path d="M20 34L18 40" stroke="#60a5fa" strokeWidth="2" strokeLinecap="round"/>
+    <path d="M44 34L46 40" stroke="#60a5fa" strokeWidth="2" strokeLinecap="round"/>
+  </svg>
+);
+
+export const CircleBrown = ({ size = 24, className = '' }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 64 64" className={className} fill="none">
+    <circle cx="32" cy="32" r="20" fill="#92400e" stroke="#78350f" strokeWidth="2"/>
+  </svg>
+);
+
 // ============ MAPA DE EMOJIS A COMPONENTES ============
 export const iconMap: Record<string, React.FC<IconProps>> = {
   '🌱': Seedling,
@@ -596,4 +623,7 @@ export const iconMap: Record<string, React.FC<IconProps>> = {
   '🍂': LeafFallen,
   '🆘': SOS,
   '❤️': Heart,
+  '📈': ChartUp,
+  '😢': FaceCry,
+  '🟤': CircleBrown,
 };
