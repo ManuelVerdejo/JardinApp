@@ -1,6 +1,7 @@
 import React from 'react';
 import { iconMap } from './Icons';
 import { plantIcons } from './PlantIcons';
+import { fertilizerIcons } from './FertilizerIcons';
 
 interface Props {
   emoji: string;
@@ -24,6 +25,24 @@ export function Icon({ emoji, size = 24, className = '' }: Props) {
         }}
       >
         <PlantIconComponent size={size} />
+      </span>
+    );
+  }
+  
+  // Luego buscar en fertilizerIcons (fertilizantes con SVGs personalizados)
+  const FertilizerIconComponent = fertilizerIcons[emoji];
+  if (FertilizerIconComponent) {
+    return (
+      <span 
+        className={`inline-flex items-center justify-center ${className}`}
+        style={{ 
+          width: size, 
+          height: size, 
+          display: 'inline-flex',
+          flexShrink: 0,
+        }}
+      >
+        <FertilizerIconComponent size={size} />
       </span>
     );
   }

@@ -50,6 +50,16 @@ export interface Cosecha {
   cantidad_estimada: number;
 }
 
+export interface Fertilizante {
+  id?: number;
+  nombre: string;
+  descripcion: string;
+  cantidad: number;
+  unidad: string;
+  fecha_creacion: string;
+  notas: string;
+}
+
 // ============ BASE DE DATOS DEXIE ============
 
 export class HuertoDB extends Dexie {
@@ -58,15 +68,17 @@ export class HuertoDB extends Dexie {
   bitacora!: Table<BitacoraCrecimiento, number>;
   salud!: Table<SaludVegetal, number>;
   cosechas!: Table<Cosecha, number>;
+  fertilizantes!: Table<Fertilizante, number>;
 
   constructor() {
     super('HuertoUrbanoDB');
-    this.version(1).stores({
+    this.version(2).stores({
       plantas: '++planta_id, nombre',
       riegos: '++id, planta_nombre, fecha',
       bitacora: '++id, planta_nombre, fecha',
       salud: '++id, planta_nombre, fecha_deteccion, estado',
       cosechas: '++id, planta_nombre, fecha',
+      fertilizantes: '++id, nombre, fecha_creacion',
     });
   }
 }

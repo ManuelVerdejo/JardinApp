@@ -9,6 +9,7 @@ import Calendar from './components/Calendar';
 import { Achievements } from './components/Achievements';
 import { VirtualGarden } from './components/VirtualGarden';
 import { InfographicGenerator } from './components/InfographicGenerator';
+import { FertilizerInventory } from './components/FertilizerInventory';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { FontSizeProvider } from './context/FontSizeContext';
 import { ThemeToggle } from './components/ThemeToggle';
@@ -16,9 +17,9 @@ import { FontSizeControl } from './components/FontSizeControl';
 import { LoadingAnimation } from './components/LoadingAnimation';
 import { Icon } from './components/Icon';
 import { Seedling, Sparkles as SparklesIcon, Package, Chart, Download, Refresh } from './components/Icons';
-import { Home, Plus, BarChart3, Save, Calendar as CalendarIcon, Trophy, Flower2, FileText } from 'lucide-react';
+import { Home, Plus, BarChart3, Save, Calendar as CalendarIcon, Trophy, Flower2, FileText, FlaskConical } from 'lucide-react';
 
-type TabType = 'dashboard' | 'registro' | 'analisis' | 'ficha' | 'calendar' | 'achievements' | 'garden' | 'infographic' | 'settings';
+type TabType = 'dashboard' | 'registro' | 'analisis' | 'ficha' | 'calendar' | 'achievements' | 'garden' | 'infographic' | 'fertilizers' | 'settings';
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
@@ -97,6 +98,7 @@ function AppContent() {
         {activeTab === 'achievements' && <Achievements />}
         {activeTab === 'garden' && <VirtualGarden />}
         {activeTab === 'infographic' && <InfographicGenerator />}
+        {activeTab === 'fertilizers' && <FertilizerInventory />}
       </main>
 
       {/* Bottom Navigation */}
@@ -107,7 +109,7 @@ function AppContent() {
           } backdrop-blur-md`}>
             <NavButton label="Inicio" iconKey="home" active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} color="green" isDark={isDark} />
             <NavButton label="Calendario" iconKey="calendar" active={activeTab === 'calendar'} onClick={() => setActiveTab('calendar')} color="indigo" isDark={isDark} />
-            <NavButton label="Resumen" iconKey="infographic" active={activeTab === 'infographic'} onClick={() => setActiveTab('infographic')} color="purple" isDark={isDark} />
+            <NavButton label="Fertilizantes" iconKey="fertilizers" active={activeTab === 'fertilizers'} onClick={() => setActiveTab('fertilizers')} color="blue" isDark={isDark} />
             <NavButton label="Logros" iconKey="trophy" active={activeTab === 'achievements'} onClick={() => setActiveTab('achievements')} color="yellow" isDark={isDark} />
             <NavButton label="Jardín" iconKey="garden" active={activeTab === 'garden'} onClick={() => setActiveTab('garden')} color="pink" isDark={isDark} />
           </div>
@@ -120,7 +122,7 @@ function AppContent() {
 }
 
 function NavButton({ label, iconKey, active, onClick, color, isDark }: { 
-  label: string; iconKey: 'home' | 'calendar' | 'trophy' | 'garden' | 'infographic'; active: boolean; onClick: () => void; color: string; isDark: boolean;
+  label: string; iconKey: 'home' | 'calendar' | 'trophy' | 'garden' | 'infographic' | 'fertilizers'; active: boolean; onClick: () => void; color: string; isDark: boolean;
 }) {
   const icons = {
     home: <Home size={20} />,
@@ -128,6 +130,7 @@ function NavButton({ label, iconKey, active, onClick, color, isDark }: {
     trophy: <Trophy size={20} />,
     garden: <Flower2 size={20} />,
     infographic: <FileText size={20} />,
+    fertilizers: <FlaskConical size={20} />,
   };
 
   const inlineIcons = {
@@ -136,6 +139,7 @@ function NavButton({ label, iconKey, active, onClick, color, isDark }: {
     trophy: '🏆',
     garden: '🏡',
     infographic: '📊',
+    fertilizers: '🧪',
   };
 
   const colors: Record<string, string> = {
