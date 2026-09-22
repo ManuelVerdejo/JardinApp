@@ -8,14 +8,17 @@ import FichaPlanta from './pages/FichaPlanta';
 import Calendar from './components/Calendar';
 import { Achievements } from './components/Achievements';
 import { VirtualGarden } from './components/VirtualGarden';
+import { InfographicGenerator } from './components/InfographicGenerator';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { FontSizeProvider } from './context/FontSizeContext';
 import { ThemeToggle } from './components/ThemeToggle';
+import { FontSizeControl } from './components/FontSizeControl';
 import { LoadingAnimation } from './components/LoadingAnimation';
 import { Icon } from './components/Icon';
 import { Seedling, Sparkles as SparklesIcon, Package, Chart, Download, Refresh } from './components/Icons';
-import { Home, Plus, BarChart3, Save, Calendar as CalendarIcon, Trophy, Flower2 } from 'lucide-react';
+import { Home, Plus, BarChart3, Save, Calendar as CalendarIcon, Trophy, Flower2, FileText } from 'lucide-react';
 
-type TabType = 'dashboard' | 'registro' | 'analisis' | 'ficha' | 'calendar' | 'achievements' | 'garden' | 'settings';
+type TabType = 'dashboard' | 'registro' | 'analisis' | 'ficha' | 'calendar' | 'achievements' | 'garden' | 'infographic' | 'settings';
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
@@ -78,6 +81,7 @@ function AppContent() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <FontSizeControl />
             <ThemeToggle />
             <div className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full flex items-center gap-1 sm:gap-1.5 shadow-cute ${
               isDark ? 'bg-gray-700' : 'glass'
@@ -99,6 +103,7 @@ function AppContent() {
         {activeTab === 'calendar' && <Calendar />}
         {activeTab === 'achievements' && <Achievements />}
         {activeTab === 'garden' && <VirtualGarden />}
+        {activeTab === 'infographic' && <InfographicGenerator />}
       </main>
 
       {/* Bottom Navigation */}
@@ -109,9 +114,9 @@ function AppContent() {
           } backdrop-blur-md`}>
             <NavButton label="Inicio" iconKey="home" active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} color="green" isDark={isDark} />
             <NavButton label="Calendario" iconKey="calendar" active={activeTab === 'calendar'} onClick={() => setActiveTab('calendar')} color="indigo" isDark={isDark} />
+            <NavButton label="Resumen" iconKey="infographic" active={activeTab === 'infographic'} onClick={() => setActiveTab('infographic')} color="purple" isDark={isDark} />
             <NavButton label="Logros" iconKey="trophy" active={activeTab === 'achievements'} onClick={() => setActiveTab('achievements')} color="yellow" isDark={isDark} />
             <NavButton label="Jardín" iconKey="garden" active={activeTab === 'garden'} onClick={() => setActiveTab('garden')} color="pink" isDark={isDark} />
-            <NavButton label="Datos" iconKey="save" active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} color="blue" isDark={isDark} />
           </div>
         </div>
       </nav>
@@ -122,14 +127,14 @@ function AppContent() {
 }
 
 function NavButton({ label, iconKey, active, onClick, color, isDark }: { 
-  label: string; iconKey: 'home' | 'calendar' | 'trophy' | 'garden' | 'save'; active: boolean; onClick: () => void; color: string; isDark: boolean;
+  label: string; iconKey: 'home' | 'calendar' | 'trophy' | 'garden' | 'infographic'; active: boolean; onClick: () => void; color: string; isDark: boolean;
 }) {
   const icons = {
     home: <Home size={20} />,
     calendar: <CalendarIcon size={20} />,
     trophy: <Trophy size={20} />,
     garden: <Flower2 size={20} />,
-    save: <Save size={20} />,
+    infographic: <FileText size={20} />,
   };
 
   const inlineIcons = {
@@ -137,7 +142,7 @@ function NavButton({ label, iconKey, active, onClick, color, isDark }: {
     calendar: '📅',
     trophy: '🏆',
     garden: '🏡',
-    save: '💾',
+    infographic: '📊',
   };
 
   const colors: Record<string, string> = {
@@ -146,6 +151,7 @@ function NavButton({ label, iconKey, active, onClick, color, isDark }: {
     yellow: active ? 'bg-gradient-to-br from-yellow-400 to-amber-500 text-white shadow-lg shadow-yellow-200/50' : isDark ? 'text-gray-400' : 'text-gray-500',
     pink: active ? 'bg-gradient-to-br from-pink-400 to-rose-500 text-white shadow-lg shadow-pink-200/50' : isDark ? 'text-gray-400' : 'text-gray-500',
     blue: active ? 'bg-gradient-to-br from-blue-400 to-cyan-500 text-white shadow-lg shadow-blue-200/50' : isDark ? 'text-gray-400' : 'text-gray-500',
+    purple: active ? 'bg-gradient-to-br from-purple-400 to-violet-500 text-white shadow-lg shadow-purple-200/50' : isDark ? 'text-gray-400' : 'text-gray-500',
   };
 
   return (
@@ -340,7 +346,9 @@ function SettingsPanel({ onClose, isDark }: { onClose: () => void; isDark: boole
 export default function App() {
   return (
     <ThemeProvider>
-      <AppContent />
+      <FontSizeProvider>
+        <AppContent />
+      </FontSizeProvider>
     </ThemeProvider>
   );
 }
