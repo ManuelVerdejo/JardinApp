@@ -2,35 +2,39 @@ import { useState, useMemo } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { Icon } from './Icon';
-import { ChevronLeft, ChevronRight, Filter } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Filter, CheckCircle2, Circle } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { useConfetti, ConfettiOverlay } from './Confetti';
 
-type EventType = 'riego' | 'cosecha' | 'medicion' | 'salud' | 'poda';
+type TaskType = 'riego' | 'fertilizante' | 'salud' | 'poda';
+type EventStatus = 'pendiente' | 'completado';
 
-interface CalendarEvent {
-  type: EventType;
+interface CalendarTask {
+  id: string;
+  type: TaskType;
   date: string;
   planta: string;
   emoji: string;
   title: string;
   subtitle: string;
   color: string;
-  bgColor: string;
-  darkBgColor: string;
+  status: EventStatus;
+  data?: any; // Para guardar referencia al objeto original
 }
 
 export default function Calendar() {
   const { isDark } = useTheme();
+  const { pieces, trigger: triggerConfetti } = useConfetti();
   const plantas = useLiveQuery(() => db.plantas.toArray()) || [];
   const riegos = useLiveQuery(() => db.riegos.toArray()) || [];
-  const cosechas = useLiveQuery(() => db.cosechas.toArray()) || [];
-  const bitacora = useLiveQuery(() => db.bitacora.toArray()) || [];
-  const salud = useLiveQuery(() => db.salud.toArray()) || [];
+  const salud = useLiveQuery(() => db.salud.where('estado').equals('En seguimiento').toArray()) || [];
+  const planesFertilizacion = useLiveQuery(() => db.planesFertilizacion.where('activo').equals(1).toArray()) || [];
+  const [completedTasks, setCompletedTasks] = useState<Set<string>>(new Set());
 
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [activeFilters, setActiveFilters] = useState<Set<EventType>>(
-    new Set(['riego', 'cosecha', 'medicion', 'salud', 'poda'])
+  const [activeFilters, setActiveFilters] = useState<Set<TaskType>>(
+    new Set(['riego', 'fertilizante', 'salud', 'poda'])
   );
 
   const year = currentDate.getFullYear();
@@ -49,132 +53,149 @@ export default function Calendar() {
     setSelectedDate(new Date().toISOString().split('T')[0]);
   };
 
-  // Convertir todos los eventos a formato unificado
-  const allEvents = useMemo((): CalendarEvent[] => {
-    const events: CalendarEvent[] = [];
+  // Generar tareas programadas
+  const allTasks = useMemo((): CalendarTask[] => {
+    const tasks: CalendarTask[] = [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    // Riegos
-    riegos.forEach(r => {
-      const planta = plantas.find(p => p.nombre === r.planta_nombre);
-      events.push({
-        type: 'riego',
-        date: r.fecha,
-        planta: r.planta_nombre,
-        emoji: planta?.emoji || '💧',
-        title: `Riego: ${r.planta_nombre}`,
-        subtitle: `${r.tipo} · ${r.cantidad}`,
-        color: 'blue',
-        bgColor: 'bg-blue-50 border-blue-200',
-        darkBgColor: 'dark:bg-blue-900/30 dark:border-blue-800',
+    // Generar tareas para los próximos 90 días
+    for (let i = 0; i < 90; i++) {
+      const date = new Date(today);
+      date.setDate(date.getDate() + i);
+      const dateStr = date.toISOString().split('T')[0];
+
+      // Tareas de riego basadas en frecuencia
+      plantas.forEach(planta => {
+        const lastWater = riegos
+          .filter(r => r.planta_nombre === planta.nombre)
+          .sort((a, b) => b.fecha.localeCompare(a.fecha))[0];
+        
+        if (lastWater) {
+          const lastDate = new Date(lastWater.fecha);
+          const daysSince = Math.floor((date.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+          
+          if (daysSince > 0 && daysSince % planta.frecuencia_riego_dias === 0) {
+            const taskId = `riego-${planta.nombre}-${dateStr}`;
+            tasks.push({
+              id: taskId,
+              type: 'riego',
+              date: dateStr,
+              planta: planta.nombre,
+              emoji: planta.emoji,
+              title: `Riego: ${planta.nombre}`,
+              subtitle: `Cada ${planta.frecuencia_riego_dias} días`,
+              color: 'blue',
+              status: completedTasks.has(taskId) ? 'completado' : 'pendiente',
+            });
+          }
+        }
       });
-    });
 
-    // Cosechas
-    cosechas.forEach(c => {
-      const planta = plantas.find(p => p.nombre === c.planta_nombre);
-      events.push({
-        type: 'cosecha',
-        date: c.fecha,
-        planta: c.planta_nombre,
-        emoji: planta?.emoji || '✂️',
-        title: `Cosecha: ${c.planta_nombre}`,
-        subtitle: `${c.parte_cosechada} · ${c.cantidad_estimada} uds`,
-        color: 'purple',
-        bgColor: 'bg-purple-50 border-purple-200',
-        darkBgColor: 'dark:bg-purple-900/30 dark:border-purple-800',
-      });
-    });
-
-    // Mediciones de crecimiento
-    bitacora.forEach(b => {
-      const planta = plantas.find(p => p.nombre === b.planta_nombre);
-      events.push({
-        type: 'medicion',
-        date: b.fecha,
-        planta: b.planta_nombre,
-        emoji: planta?.emoji || '📏',
-        title: `Medición: ${b.planta_nombre}`,
-        subtitle: `${b.altura_cm} cm · ${b.num_plantas} planta(s)`,
-        color: 'green',
-        bgColor: 'bg-green-50 border-green-200',
-        darkBgColor: 'dark:bg-green-900/30 dark:border-green-800',
-      });
-    });
-
-    // Incidencias de salud
-    salud.forEach(s => {
-      const planta = plantas.find(p => p.nombre === s.planta_nombre);
-      events.push({
-        type: 'salud',
-        date: s.fecha_deteccion,
-        planta: s.planta_nombre,
-        emoji: planta?.emoji || '🐛',
-        title: `Incidencia: ${s.planta_nombre}`,
-        subtitle: `${s.sintoma_riesgo} · ${s.estado}`,
-        color: 'orange',
-        bgColor: 'bg-orange-50 border-orange-200',
-        darkBgColor: 'dark:bg-orange-900/30 dark:border-orange-800',
-      });
-    });
-
-    // Podas (simuladas basadas en ajuste_manejo de plantas)
-    // En una implementación real, esto vendría de una tabla de podas
-    // Por ahora, generamos eventos de poda cada 15 días para plantas que lo necesitan
-    plantas.forEach(planta => {
-      if (planta.ajuste_manejo.toLowerCase().includes('poda')) {
-        // Generar podas cada 15 días del mes actual
-        for (let day = 1; day <= daysInMonth; day += 15) {
-          const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-          events.push({
-            type: 'poda',
+      // Tareas de fertilización basadas en planes
+      planesFertilizacion.forEach(plan => {
+        const lastDate = new Date(plan.ultima_aplicacion);
+        const daysSince = Math.floor((date.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+        
+        if (daysSince > 0 && daysSince % plan.frecuencia_dias === 0) {
+          const taskId = `fertilizante-${plan.planta_nombre}-${plan.fertilizante_nombre}-${dateStr}`;
+          const planta = plantas.find(p => p.nombre === plan.planta_nombre);
+          tasks.push({
+            id: taskId,
+            type: 'fertilizante',
             date: dateStr,
-            planta: planta.nombre,
-            emoji: planta.emoji,
-            title: `Poda programada: ${planta.nombre}`,
-            subtitle: planta.ajuste_manejo,
-            color: 'pink',
-            bgColor: 'bg-pink-50 border-pink-200',
-            darkBgColor: 'dark:bg-pink-900/30 dark:border-pink-800',
+            planta: plan.planta_nombre,
+            emoji: planta?.emoji || '🌱',
+            title: `Fertilizar: ${plan.planta_nombre}`,
+            subtitle: plan.fertilizante_nombre,
+            color: 'green',
+            status: completedTasks.has(taskId) ? 'completado' : 'pendiente',
+            data: plan,
           });
         }
-      }
-    });
+      });
 
-    return events.filter(e => activeFilters.has(e.type));
-  }, [riegos, cosechas, bitacora, salud, plantas, activeFilters, year, month, daysInMonth]);
+      // Alertas de salud activas (revisar cada 3 días)
+      salud.forEach(s => {
+        const detectionDate = new Date(s.fecha_deteccion);
+        const daysSince = Math.floor((date.getTime() - detectionDate.getTime()) / (1000 * 60 * 60 * 24));
+        
+        if (daysSince >= 0 && daysSince % 3 === 0) {
+          const taskId = `salud-${s.planta_nombre}-${dateStr}`;
+          const planta = plantas.find(p => p.nombre === s.planta_nombre);
+          tasks.push({
+            id: taskId,
+            type: 'salud',
+            date: dateStr,
+            planta: s.planta_nombre,
+            emoji: planta?.emoji || '🐛',
+            title: `Revisar: ${s.planta_nombre}`,
+            subtitle: s.sintoma_riesgo,
+            color: 'orange',
+            status: completedTasks.has(taskId) ? 'completado' : 'pendiente',
+            data: s,
+          });
+        }
+      });
 
-  // Filtrar eventos del mes actual
-  const monthEvents = useMemo(() => {
+      // Podas programadas (cada 15 días para plantas que lo necesitan)
+      plantas.forEach(planta => {
+        if (planta.ajuste_manejo.toLowerCase().includes('poda')) {
+          const daysSinceStart = Math.floor((date.getTime() - new Date(year, 0, 1).getTime()) / (1000 * 60 * 60 * 24));
+          
+          if (daysSinceStart % 15 === 0) {
+            const taskId = `poda-${planta.nombre}-${dateStr}`;
+            tasks.push({
+              id: taskId,
+              type: 'poda',
+              date: dateStr,
+              planta: planta.nombre,
+              emoji: planta.emoji,
+              title: `Poda: ${planta.nombre}`,
+              subtitle: planta.ajuste_manejo,
+              color: 'pink',
+              status: completedTasks.has(taskId) ? 'completado' : 'pendiente',
+            });
+          }
+        }
+      });
+    }
+
+    return tasks.filter(t => activeFilters.has(t.type));
+  }, [plantas, riegos, planesFertilizacion, salud, activeFilters, year, month, completedTasks]);
+
+  // Filtrar tareas del mes actual
+  const monthTasks = useMemo(() => {
     const monthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
-    return allEvents.filter(e => e.date.startsWith(monthStr));
-  }, [allEvents, year, month]);
+    return allTasks.filter(t => t.date.startsWith(monthStr));
+  }, [allTasks, year, month]);
 
-  // Contar eventos por día
-  const eventsByDate = useMemo(() => {
-    const map: Record<string, CalendarEvent[]> = {};
-    monthEvents.forEach(event => {
-      if (!map[event.date]) map[event.date] = [];
-      map[event.date].push(event);
+  // Contar tareas por día
+  const tasksByDate = useMemo(() => {
+    const map: Record<string, CalendarTask[]> = {};
+    monthTasks.forEach(task => {
+      if (!map[task.date]) map[task.date] = [];
+      map[task.date].push(task);
     });
     return map;
-  }, [monthEvents]);
+  }, [monthTasks]);
 
-  // Eventos del día seleccionado
-  const selectedEvents = selectedDate ? (eventsByDate[selectedDate] || []) : [];
+  // Tareas del día seleccionado
+  const selectedTasks = selectedDate ? (tasksByDate[selectedDate] || []) : [];
 
   // Estadísticas del mes
   const monthStats = useMemo(() => {
     const stats = {
-      riegos: monthEvents.filter(e => e.type === 'riego').length,
-      cosechas: monthEvents.filter(e => e.type === 'cosecha').length,
-      mediciones: monthEvents.filter(e => e.type === 'medicion').length,
-      salud: monthEvents.filter(e => e.type === 'salud').length,
-      podas: monthEvents.filter(e => e.type === 'poda').length,
+      riegos: monthTasks.filter(t => t.type === 'riego').length,
+      fertilizantes: monthTasks.filter(t => t.type === 'fertilizante').length,
+      salud: monthTasks.filter(t => t.type === 'salud').length,
+      podas: monthTasks.filter(t => t.type === 'poda').length,
+      completadas: monthTasks.filter(t => t.status === 'completado').length,
     };
     return stats;
-  }, [monthEvents]);
+  }, [monthTasks]);
 
-  const toggleFilter = (type: EventType) => {
+  const toggleFilter = (type: TaskType) => {
     setActiveFilters(prev => {
       const newFilters = new Set(prev);
       if (newFilters.has(type)) {
@@ -186,21 +207,32 @@ export default function Calendar() {
     });
   };
 
+  const toggleTaskCompletion = (taskId: string) => {
+    setCompletedTasks(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(taskId)) {
+        newSet.delete(taskId);
+      } else {
+        newSet.add(taskId);
+        triggerConfetti();
+      }
+      return newSet;
+    });
+  };
+
   const filterConfig = {
     riego: { emoji: '💧', label: 'Riegos', color: 'blue' },
-    cosecha: { emoji: '✂️', label: 'Cosechas', color: 'purple' },
-    medicion: { emoji: '📏', label: 'Mediciones', color: 'green' },
+    fertilizante: { emoji: '🧪', label: 'Fertilizantes', color: 'green' },
     salud: { emoji: '🐛', label: 'Salud', color: 'orange' },
     poda: { emoji: '✂️', label: 'Podas', color: 'pink' },
   };
 
-  const getEventColorClasses = (color: string, isSelected: boolean = false) => {
+  const getTaskColorClasses = (color: string) => {
     const colors: Record<string, string> = {
-      blue: isSelected ? 'bg-blue-500' : 'bg-blue-400 dark:bg-blue-600',
-      purple: isSelected ? 'bg-purple-500' : 'bg-purple-400 dark:bg-purple-600',
-      green: isSelected ? 'bg-green-500' : 'bg-green-400 dark:bg-green-600',
-      orange: isSelected ? 'bg-orange-500' : 'bg-orange-400 dark:bg-orange-600',
-      pink: isSelected ? 'bg-pink-500' : 'bg-pink-400 dark:bg-pink-600',
+      blue: 'bg-blue-400 dark:bg-blue-600',
+      green: 'bg-green-400 dark:bg-green-600',
+      orange: 'bg-orange-400 dark:bg-orange-600',
+      pink: 'bg-pink-400 dark:bg-pink-600',
     };
     return colors[color] || 'bg-gray-400';
   };
@@ -208,7 +240,6 @@ export default function Calendar() {
   const getTextClasses = (color: string) => {
     const textColors: Record<string, string> = {
       blue: isDark ? 'text-blue-300' : 'text-blue-800',
-      purple: isDark ? 'text-purple-300' : 'text-purple-800',
       green: isDark ? 'text-green-300' : 'text-green-800',
       orange: isDark ? 'text-orange-300' : 'text-orange-800',
       pink: isDark ? 'text-pink-300' : 'text-pink-800',
@@ -219,7 +250,6 @@ export default function Calendar() {
   const getSubtitleClasses = (color: string) => {
     const subtitleColors: Record<string, string> = {
       blue: isDark ? 'text-blue-400' : 'text-blue-600',
-      purple: isDark ? 'text-purple-400' : 'text-purple-600',
       green: isDark ? 'text-green-400' : 'text-green-600',
       orange: isDark ? 'text-orange-400' : 'text-orange-600',
       pink: isDark ? 'text-pink-400' : 'text-pink-600',
@@ -229,27 +259,28 @@ export default function Calendar() {
 
   return (
     <div className="space-y-4">
+      <ConfettiOverlay pieces={pieces} />
+
       {/* Header */}
       <div className="text-center animate-fade-in">
         <Icon emoji="📅" size={40} className="mx-auto animate-float" />
-        <h2 className={`text-lg font-black mt-2 ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Calendario del Huerto</h2>
-        <p className={`text-xs font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Visualiza todos los eventos</p>
+        <h2 className={`text-lg font-black mt-2 ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Calendario de Tareas</h2>
+        <p className={`text-xs font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Planifica y gestiona tus tareas</p>
       </div>
 
       {/* Filtros */}
       <div className={`rounded-2xl p-3 shadow-cute ${isDark ? 'bg-gray-800/80 border border-gray-700' : 'bg-white/80 backdrop-blur-sm border-2 border-indigo-100'}`}>
         <div className="flex items-center gap-2 mb-2">
           <Filter size={14} className={isDark ? 'text-gray-400' : 'text-gray-600'} />
-          <span className={`text-xs font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Filtrar eventos</span>
+          <span className={`text-xs font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Filtrar tareas</span>
         </div>
         <div className="flex flex-wrap gap-1.5">
-          {(Object.keys(filterConfig) as EventType[]).map(type => {
+          {(Object.keys(filterConfig) as TaskType[]).map(type => {
             const config = filterConfig[type];
             const isActive = activeFilters.has(type);
             
             const activeGradients: Record<string, string> = {
               blue: 'bg-gradient-to-r from-blue-400 to-blue-500',
-              purple: 'bg-gradient-to-r from-purple-400 to-purple-500',
               green: 'bg-gradient-to-r from-green-400 to-green-500',
               orange: 'bg-gradient-to-r from-orange-400 to-orange-500',
               pink: 'bg-gradient-to-r from-pink-400 to-pink-500',
@@ -333,8 +364,9 @@ export default function Calendar() {
           {Array.from({ length: daysInMonth }).map((_, i) => {
             const day = i + 1;
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-            const dayEvents = eventsByDate[dateStr] || [];
-            const eventCount = dayEvents.length;
+            const dayTasks = tasksByDate[dateStr] || [];
+            const taskCount = dayTasks.length;
+            const pendingCount = dayTasks.filter(t => t.status === 'pendiente').length;
             const isSelected = selectedDate === dateStr;
             const isToday = dateStr === new Date().toISOString().split('T')[0];
 
@@ -355,22 +387,25 @@ export default function Calendar() {
                 }`}
               >
                 <span className="text-xs sm:text-sm font-medium">{day}</span>
-                {eventCount > 0 && (
+                {taskCount > 0 && (
                   <div className="flex gap-0.5 mt-0.5 flex-wrap justify-center max-w-full px-0.5">
-                    {dayEvents.slice(0, 4).map((event, j) => (
+                    {dayTasks.slice(0, 4).map((task, j) => (
                       <div 
                         key={j} 
                         className={`w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full ${
-                          isSelected ? 'bg-white' : getEventColorClasses(event.color)
-                        }`}
+                          isSelected ? 'bg-white' : getTaskColorClasses(task.color)
+                        } ${task.status === 'completado' ? 'opacity-50' : ''}`}
                       ></div>
                     ))}
-                    {eventCount > 4 && (
+                    {taskCount > 4 && (
                       <span className={`text-[8px] font-bold ${isSelected ? 'text-white' : isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                        +{eventCount - 4}
+                        +{taskCount - 4}
                       </span>
                     )}
                   </div>
+                )}
+                {pendingCount > 0 && !isSelected && (
+                  <div className="absolute top-0.5 right-0.5 w-2 h-2 bg-red-500 rounded-full"></div>
                 )}
               </button>
             );
@@ -388,13 +423,9 @@ export default function Calendar() {
             <p className={`text-lg font-black ${isDark ? 'text-blue-400' : 'text-blue-700'}`}>{monthStats.riegos}</p>
             <p className={`text-[9px] font-medium ${isDark ? 'text-blue-500' : 'text-blue-600'}`}>Riegos</p>
           </div>
-          <div className={`text-center p-2 rounded-xl ${isDark ? 'bg-purple-900/30' : 'bg-purple-50'}`}>
-            <p className={`text-lg font-black ${isDark ? 'text-purple-400' : 'text-purple-700'}`}>{monthStats.cosechas}</p>
-            <p className={`text-[9px] font-medium ${isDark ? 'text-purple-500' : 'text-purple-600'}`}>Cosechas</p>
-          </div>
           <div className={`text-center p-2 rounded-xl ${isDark ? 'bg-green-900/30' : 'bg-green-50'}`}>
-            <p className={`text-lg font-black ${isDark ? 'text-green-400' : 'text-green-700'}`}>{monthStats.mediciones}</p>
-            <p className={`text-[9px] font-medium ${isDark ? 'text-green-500' : 'text-green-600'}`}>Mediciones</p>
+            <p className={`text-lg font-black ${isDark ? 'text-green-400' : 'text-green-700'}`}>{monthStats.fertilizantes}</p>
+            <p className={`text-[9px] font-medium ${isDark ? 'text-green-500' : 'text-green-600'}`}>Fertiliz.</p>
           </div>
           <div className={`text-center p-2 rounded-xl ${isDark ? 'bg-orange-900/30' : 'bg-orange-50'}`}>
             <p className={`text-lg font-black ${isDark ? 'text-orange-400' : 'text-orange-700'}`}>{monthStats.salud}</p>
@@ -404,51 +435,77 @@ export default function Calendar() {
             <p className={`text-lg font-black ${isDark ? 'text-pink-400' : 'text-pink-700'}`}>{monthStats.podas}</p>
             <p className={`text-[9px] font-medium ${isDark ? 'text-pink-500' : 'text-pink-600'}`}>Podas</p>
           </div>
+          <div className={`text-center p-2 rounded-xl ${isDark ? 'bg-purple-900/30' : 'bg-purple-50'}`}>
+            <p className={`text-lg font-black ${isDark ? 'text-purple-400' : 'text-purple-700'}`}>{monthStats.completadas}</p>
+            <p className={`text-[9px] font-medium ${isDark ? 'text-purple-500' : 'text-purple-600'}`}>Hechas</p>
+          </div>
         </div>
       </div>
 
-      {/* Selected date events */}
+      {/* Selected date tasks */}
       {selectedDate && (
         <div className={`rounded-2xl p-4 shadow-cute animate-fade-in ${
           isDark ? 'bg-gray-800/80 border-2 border-indigo-900' : 'bg-white/80 backdrop-blur-sm border-2 border-indigo-100'
         }`}>
           <div className="flex items-center justify-between mb-3">
             <h4 className={`font-black text-sm ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>
-              Eventos del {selectedDate.split('-').reverse().join('/')}
+              Tareas del {selectedDate.split('-').reverse().join('/')}
             </h4>
             <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
               isDark ? 'bg-indigo-900 text-indigo-400' : 'bg-indigo-100 text-indigo-600'
             }`}>
-              {selectedEvents.length} evento{selectedEvents.length !== 1 ? 's' : ''}
+              {selectedTasks.length} tarea{selectedTasks.length !== 1 ? 's' : ''}
             </span>
           </div>
           
-          {selectedEvents.length === 0 ? (
+          {selectedTasks.length === 0 ? (
             <div className="text-center py-6">
               <Icon emoji="📭" size={40} className="mx-auto opacity-50" />
-              <p className={`text-xs mt-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Sin eventos este día</p>
+              <p className={`text-xs mt-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Sin tareas para este día</p>
             </div>
           ) : (
             <div className="space-y-2 max-h-96 overflow-y-auto">
-              {selectedEvents.map((event, i) => (
+              {selectedTasks.map((task) => (
                 <div 
-                  key={i} 
-                  className={`flex items-start gap-3 rounded-xl p-3 border-2 transition-all hover:scale-[1.02] ${
-                    isDark ? event.darkBgColor : event.bgColor
+                  key={task.id}
+                  className={`flex items-start gap-3 rounded-xl p-3 border-2 transition-all ${
+                    task.status === 'completado' ? 'opacity-60' : ''
+                  } ${
+                    isDark 
+                      ? `${task.color === 'blue' ? 'bg-blue-900/30 border-blue-800' : 
+                           task.color === 'green' ? 'bg-green-900/30 border-green-800' :
+                           task.color === 'orange' ? 'bg-orange-900/30 border-orange-800' :
+                           'bg-pink-900/30 border-pink-800'}`
+                      : `${task.color === 'blue' ? 'bg-blue-50 border-blue-200' : 
+                           task.color === 'green' ? 'bg-green-50 border-green-200' :
+                           task.color === 'orange' ? 'bg-orange-50 border-orange-200' :
+                           'bg-pink-50 border-pink-200'}`
                   }`}
                 >
+                  <button
+                    onClick={() => toggleTaskCompletion(task.id)}
+                    className="flex-shrink-0 mt-0.5"
+                  >
+                    {task.status === 'completado' ? (
+                      <CheckCircle2 size={20} className="text-green-500" />
+                    ) : (
+                      <Circle size={20} className={isDark ? 'text-gray-500' : 'text-gray-400'} />
+                    )}
+                  </button>
                   <div className="flex-shrink-0">
-                    <Icon emoji={event.emoji} size={24} />
+                    <Icon emoji={task.emoji} size={24} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className={`text-xs font-bold truncate ${getTextClasses(event.color)}`}>
-                      {event.title}
+                    <p className={`text-xs font-bold truncate ${getTextClasses(task.color)} ${
+                      task.status === 'completado' ? 'line-through' : ''
+                    }`}>
+                      {task.title}
                     </p>
-                    <p className={`text-[11px] mt-0.5 ${getSubtitleClasses(event.color)}`}>
-                      {event.subtitle}
+                    <p className={`text-[11px] mt-0.5 ${getSubtitleClasses(task.color)}`}>
+                      {task.subtitle}
                     </p>
                   </div>
-                  <div className={`flex-shrink-0 w-2 h-2 rounded-full ${getEventColorClasses(event.color)}`}></div>
+                  <div className={`flex-shrink-0 w-2 h-2 rounded-full ${getTaskColorClasses(task.color)}`}></div>
                 </div>
               ))}
             </div>
@@ -461,7 +518,7 @@ export default function Calendar() {
         <div className={`text-center py-6 rounded-2xl ${isDark ? 'bg-gray-800/50' : 'bg-white/50'}`}>
           <Icon emoji="👆" size={32} className="mx-auto opacity-50" />
           <p className={`text-xs mt-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-            Selecciona un día para ver los eventos
+            Selecciona un día para ver las tareas
           </p>
         </div>
       )}
