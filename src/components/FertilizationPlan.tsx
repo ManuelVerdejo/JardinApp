@@ -45,9 +45,18 @@ export function FertilizationPlan() {
     const hoy = new Date().toISOString().split('T')[0];
     const proximaAplicacion = calcularProximaAplicacion(hoy, plan.frecuencia_dias);
 
+    // Actualizar plan de fertilización
     await db.planesFertilizacion.update(plan.id!, {
       ultima_aplicacion: hoy,
       proxima_aplicacion: proximaAplicacion
+    });
+
+    // Registrar también como riego (el fertilizante cuenta como riego)
+    await db.riegos.add({
+      planta_nombre: plan.planta_nombre,
+      fecha: hoy,
+      tipo: plan.fertilizante_nombre,
+      cantidad: 'Normal',
     });
   };
 

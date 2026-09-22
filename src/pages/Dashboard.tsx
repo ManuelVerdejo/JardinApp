@@ -64,12 +64,23 @@ export default function Dashboard({ onOpenFicha }: Props) {
     const proximaAplicacion = new Date();
     proximaAplicacion.setDate(proximaAplicacion.getDate() + plan.frecuencia_dias);
     
+    // Actualizar plan de fertilización
     await db.planesFertilizacion.update(plan.id!, {
       ultima_aplicacion: hoy,
       proxima_aplicacion: proximaAplicacion.toISOString().split('T')[0]
     });
     
+    // Registrar también como riego (el fertilizante cuenta como riego)
+    await db.riegos.add({
+      planta_nombre: plan.planta_nombre,
+      fecha: hoy,
+      tipo: plan.fertilizante_nombre,
+      cantidad: 'Normal',
+    });
+    
+    setJustWatered(plan.planta_nombre);
     triggerConfetti();
+    setTimeout(() => setJustWatered(null), 1500);
     setRefreshKey(k => k + 1);
   };
 
