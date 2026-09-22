@@ -1,5 +1,6 @@
 import React from 'react';
 import { iconMap } from './Icons';
+import { plantIcons } from './PlantIcons';
 
 interface Props {
   emoji: string;
@@ -9,8 +10,26 @@ interface Props {
 
 // Componente que renderiza un SVG en lugar de un emoji
 export function Icon({ emoji, size = 24, className = '' }: Props) {
-  const IconComponent = iconMap[emoji];
+  // Primero buscar en plantIcons (nuevas plantas con SVGs personalizados)
+  const PlantIconComponent = plantIcons[emoji];
+  if (PlantIconComponent) {
+    return (
+      <span 
+        className={`inline-flex items-center justify-center ${className}`}
+        style={{ 
+          width: size, 
+          height: size, 
+          display: 'inline-flex',
+          flexShrink: 0,
+        }}
+      >
+        <PlantIconComponent size={size} />
+      </span>
+    );
+  }
   
+  // Luego buscar en iconMap (iconos originales)
+  const IconComponent = iconMap[emoji];
   if (IconComponent) {
     return (
       <span 

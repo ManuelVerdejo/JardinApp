@@ -15,7 +15,8 @@ import { Tooltip, FeatureTooltip } from '../components/Tooltip';
 import { Icon } from '../components/Icon';
 import { WaterDrop, Rainbow, Alert } from '../components/Icons';
 import { useTheme } from '../context/ThemeContext';
-import { Clock, Info } from 'lucide-react';
+import { Clock, Info, Plus } from 'lucide-react';
+import { AddPlantModal } from '../components/AddPlantModal';
 
 interface Props {
   onOpenFicha: (nombre: string) => void;
@@ -30,6 +31,7 @@ export default function Dashboard({ onOpenFicha }: Props) {
   const [justWatered, setJustWatered] = useState<string | null>(null);
   const { isDark } = useTheme();
   const [showTooltips, setShowTooltips] = useState(true);
+  const [showAddPlantModal, setShowAddPlantModal] = useState(false);
   
   // Ocultar tooltips después de 10 segundos
   useEffect(() => {
@@ -319,6 +321,25 @@ export default function Dashboard({ onOpenFicha }: Props) {
           Toca una planta para ver su ficha completa ✨
         </p>
       </div>
+
+      {/* Floating Action Button - Add Plant */}
+      <button
+        onClick={() => setShowAddPlantModal(true)}
+        className="fixed bottom-24 right-4 sm:right-8 w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 flex items-center justify-center z-40"
+        aria-label="Añadir nueva planta"
+      >
+        <Plus size={28} className="text-white" />
+      </button>
+
+      {/* Add Plant Modal */}
+      <AddPlantModal
+        isOpen={showAddPlantModal}
+        onClose={() => setShowAddPlantModal(false)}
+        onSuccess={() => {
+          // Refresh data
+          setRefreshKey(k => k + 1);
+        }}
+      />
     </div>
   );
 }
