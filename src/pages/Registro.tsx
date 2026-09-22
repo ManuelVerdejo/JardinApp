@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
-import { Droplets, Ruler, Bug, Scissors, Check } from 'lucide-react';
+import { Droplets, Ruler, Bug, Scissors, Check, Sparkles, Heart } from 'lucide-react';
+import { useConfetti, ConfettiOverlay } from '../components/Confetti';
 
 type FormType = 'riego' | 'crecimiento' | 'salud' | 'cosecha';
 
@@ -9,67 +10,97 @@ export default function Registro() {
   const [activeForm, setActiveForm] = useState<FormType>('riego');
   const plantas = useLiveQuery(() => db.plantas.toArray()) || [];
   const [showSuccess, setShowSuccess] = useState(false);
+  const { pieces, trigger: triggerConfetti } = useConfetti();
 
   const nombres = plantas.map(p => p.nombre);
 
   const handleSuccess = () => {
     setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 2000);
+    triggerConfetti();
+    setTimeout(() => setShowSuccess(false), 2500);
   };
 
   const forms = [
-    { id: 'riego' as const, icon: <Droplets size={18} />, label: 'Riego', color: 'bg-blue-500' },
-    { id: 'crecimiento' as const, icon: <Ruler size={18} />, label: 'Altura', color: 'bg-green-500' },
-    { id: 'salud' as const, icon: <Bug size={18} />, label: 'Salud', color: 'bg-orange-500' },
-    { id: 'cosecha' as const, icon: <Scissors size={18} />, label: 'Cosecha', color: 'bg-purple-500' },
+    { id: 'riego' as const, icon: '💧', label: 'Riego', gradient: 'from-blue-400 to-cyan-400', activeGradient: 'from-blue-500 to-cyan-500' },
+    { id: 'crecimiento' as const, icon: '📏', label: 'Altura', gradient: 'from-green-400 to-emerald-400', activeGradient: 'from-green-500 to-emerald-500' },
+    { id: 'salud' as const, icon: '🐛', label: 'Salud', gradient: 'from-orange-400 to-amber-400', activeGradient: 'from-orange-500 to-amber-500' },
+    { id: 'cosecha' as const, icon: '✂️', label: 'Cosecha', gradient: 'from-purple-400 to-pink-400', activeGradient: 'from-purple-500 to-pink-500' },
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
+      <ConfettiOverlay pieces={pieces} />
+
       {/* Success toast */}
       {showSuccess && (
-        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-green-500 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 animate-bounce">
-          <Check size={16} />
-          <span className="text-sm font-medium">¡Registrado!</span>
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 animate-bounce-in">
+          <div className="bg-gradient-to-r from-green-400 to-emerald-500 text-white px-5 py-3 rounded-2xl shadow-cute-lg flex items-center gap-2 border-2 border-white">
+            <span className="text-xl">✨</span>
+            <span className="text-sm font-black">¡Registrado con éxito!</span>
+            <span className="text-xl">💚</span>
+          </div>
         </div>
       )}
 
-      {/* Form tabs */}
-      <div className="flex gap-2 overflow-x-auto pb-1">
+      {/* Header */}
+      <div className="text-center animate-fade-in">
+        <span className="text-4xl animate-float">📝</span>
+        <h2 className="text-lg font-black text-gray-800 mt-2">Registro Rápido</h2>
+        <p className="text-xs text-gray-500 font-medium">Añade datos a tu huerto en un toque</p>
+      </div>
+
+      {/* Form tabs cute */}
+      <div className="flex gap-2 overflow-x-auto pb-1 px-1">
         {forms.map(f => (
           <button
             key={f.id}
             onClick={() => setActiveForm(f.id)}
-            className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
+            className={`flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all duration-300 btn-cute border-2 ${
               activeForm === f.id
-                ? `${f.color} text-white shadow-md`
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? `bg-gradient-to-r ${f.activeGradient} text-white border-white shadow-lg scale-105`
+                : `bg-white text-gray-600 border-gray-100 hover:border-gray-200 shadow-sm`
             }`}
           >
-            {f.icon}
+            <span className="text-base">{f.icon}</span>
             {f.label}
           </button>
         ))}
       </div>
 
       {/* Forms */}
-      {activeForm === 'riego' && <FormRiego nombres={nombres} onSuccess={handleSuccess} />}
-      {activeForm === 'crecimiento' && <FormCrecimiento nombres={nombres} onSuccess={handleSuccess} />}
-      {activeForm === 'salud' && <FormSalud nombres={nombres} onSuccess={handleSuccess} />}
-      {activeForm === 'cosecha' && <FormCosecha nombres={nombres} onSuccess={handleSuccess} />}
+      <div className="animate-fade-in">
+        {activeForm === 'riego' && <FormRiego nombres={nombres} onSuccess={handleSuccess} plantas={plantas} />}
+        {activeForm === 'crecimiento' && <FormCrecimiento nombres={nombres} onSuccess={handleSuccess} plantas={plantas} />}
+        {activeForm === 'salud' && <FormSalud nombres={nombres} onSuccess={handleSuccess} plantas={plantas} />}
+        {activeForm === 'cosecha' && <FormCosecha nombres={nombres} onSuccess={handleSuccess} plantas={plantas} />}
+      </div>
     </div>
   );
 }
 
 // ============ FORMULARIO DE RIEGO ============
-function FormRiego({ nombres, onSuccess }: { nombres: string[]; onSuccess: () => void }) {
+function FormRiego({ nombres, onSuccess, plantas }: { nombres: string[]; onSuccess: () => void; plantas: any[] }) {
   const [planta, setPlanta] = useState(nombres[0] || '');
   const [tipo, setTipo] = useState('Agua limpia');
   const [cantidad, setCantidad] = useState('Normal');
   const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0]);
 
-  const tipos = ['Agua limpia', 'Té de plátano', 'Infusión de café', 'Agua de arroz', 'Cáscara de huevo', 'Humus líquido', 'Infusión de arroz'];
-  const cantidades = ['Poca', 'Normal', 'Mucha'];
+  const tipos = [
+    { name: 'Agua limpia', emoji: '💧' },
+    { name: 'Té de plátano', emoji: '🍌' },
+    { name: 'Infusión de café', emoji: '☕' },
+    { name: 'Agua de arroz', emoji: '🍚' },
+    { name: 'Cáscara de huevo', emoji: '🥚' },
+    { name: 'Humus líquido', emoji: '🪱' },
+    { name: 'Infusión de arroz', emoji: '🌾' },
+  ];
+  const cantidades = [
+    { name: 'Poca', emoji: '💧' },
+    { name: 'Normal', emoji: '💧💧' },
+    { name: 'Mucha', emoji: '💧💧💧' },
+  ];
+
+  const plantaActual = plantas.find(p => p.nombre === planta);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,72 +109,106 @@ function FormRiego({ nombres, onSuccess }: { nombres: string[]; onSuccess: () =>
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-200 p-4 space-y-4">
-      <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-        <Droplets size={16} className="text-blue-500" /> Registrar Riego
-      </h3>
+    <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-sm rounded-3xl border-2 border-blue-100 p-5 space-y-5 shadow-cute-lg">
+      <div className="flex items-center gap-2">
+        <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-xl flex items-center justify-center shadow-cute">
+          <span className="text-base">💧</span>
+        </div>
+        <h3 className="font-black text-gray-800">Registrar Riego</h3>
+      </div>
       
+      {/* Planta seleccionada visual */}
+      {plantaActual && (
+        <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-3 flex items-center gap-3 border border-blue-100">
+          <span className="text-3xl">{plantaActual.emoji}</span>
+          <div>
+            <p className="font-bold text-sm text-blue-900">{plantaActual.nombre}</p>
+            <p className="text-[10px] text-blue-600">{plantaActual.fase_actual}</p>
+          </div>
+        </div>
+      )}
+
       <div>
-        <label className="text-xs font-medium text-gray-600 mb-1 block">Planta</label>
-        <select value={planta} onChange={e => setPlanta(e.target.value)} className="w-full p-2.5 rounded-lg border border-gray-200 text-sm bg-gray-50 focus:ring-2 focus:ring-blue-300 focus:border-blue-400 outline-none">
-          {nombres.map(n => <option key={n} value={n}>{n}</option>)}
+        <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
+          <span>🌱</span> Planta
+        </label>
+        <select value={planta} onChange={e => setPlanta(e.target.value)} className="w-full p-3 rounded-xl border-2 border-blue-100 text-sm bg-blue-50/50 focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none font-medium">
+          {nombres.map(n => <option key={n} value={n}>{plantas.find(p => p.nombre === n)?.emoji} {n}</option>)}
         </select>
       </div>
 
       <div>
-        <label className="text-xs font-medium text-gray-600 mb-1 block">Tipo de riego</label>
-        <div className="grid grid-cols-2 gap-1.5">
+        <label className="text-xs font-bold text-gray-600 mb-2 block flex items-center gap-1">
+          <span>🧪</span> Tipo de riego
+        </label>
+        <div className="grid grid-cols-2 gap-2">
           {tipos.map(t => (
             <button
-              key={t}
+              key={t.name}
               type="button"
-              onClick={() => setTipo(t)}
-              className={`p-2 rounded-lg text-xs font-medium border transition-all ${
-                tipo === t ? 'bg-blue-500 text-white border-blue-500' : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100'
+              onClick={() => setTipo(t.name)}
+              className={`p-2.5 rounded-xl text-xs font-bold border-2 transition-all btn-cute flex items-center gap-1.5 ${
+                tipo === t.name 
+                  ? 'bg-gradient-to-r from-blue-400 to-cyan-400 text-white border-white shadow-lg scale-[1.02]' 
+                  : 'bg-white text-gray-700 border-gray-100 hover:border-blue-200'
               }`}
             >
-              {t}
+              <span>{t.emoji}</span>
+              <span className="truncate">{t.name}</span>
             </button>
           ))}
         </div>
       </div>
 
       <div>
-        <label className="text-xs font-medium text-gray-600 mb-1 block">Cantidad</label>
+        <label className="text-xs font-bold text-gray-600 mb-2 block flex items-center gap-1">
+          <span>📊</span> Cantidad
+        </label>
         <div className="flex gap-2">
           {cantidades.map(c => (
             <button
-              key={c}
+              key={c.name}
               type="button"
-              onClick={() => setCantidad(c)}
-              className={`flex-1 p-2 rounded-lg text-xs font-medium border transition-all ${
-                cantidad === c ? 'bg-blue-500 text-white border-blue-500' : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100'
+              onClick={() => setCantidad(c.name)}
+              className={`flex-1 p-3 rounded-xl text-xs font-bold border-2 transition-all btn-cute ${
+                cantidad === c.name 
+                  ? 'bg-gradient-to-r from-blue-400 to-cyan-400 text-white border-white shadow-lg scale-[1.02]' 
+                  : 'bg-white text-gray-700 border-gray-100 hover:border-blue-200'
               }`}
             >
-              {c === 'Poca' ? '💧' : c === 'Normal' ? '💧💧' : '💧💧💧'} {c}
+              <div className="text-center">
+                <span className="text-sm block">{c.emoji}</span>
+                <span className="mt-0.5 block">{c.name}</span>
+              </div>
             </button>
           ))}
         </div>
       </div>
 
       <div>
-        <label className="text-xs font-medium text-gray-600 mb-1 block">Fecha</label>
-        <input type="date" value={fecha} onChange={e => setFecha(e.target.value)} className="w-full p-2.5 rounded-lg border border-gray-200 text-sm bg-gray-50 focus:ring-2 focus:ring-blue-300 outline-none" />
+        <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
+          <span>📅</span> Fecha
+        </label>
+        <input type="date" value={fecha} onChange={e => setFecha(e.target.value)} className="w-full p-3 rounded-xl border-2 border-blue-100 text-sm bg-blue-50/50 focus:ring-2 focus:ring-blue-300 outline-none font-medium" />
       </div>
 
-      <button type="submit" className="w-full py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-medium text-sm transition-all active:scale-[0.98]">
-        💧 Registrar Riego
+      <button type="submit" className="w-full py-3.5 bg-gradient-to-r from-blue-400 to-cyan-500 hover:from-blue-500 hover:to-cyan-600 text-white rounded-2xl font-black text-sm transition-all btn-cute shadow-lg shadow-blue-200 border-2 border-white/50 flex items-center justify-center gap-2">
+        <span className="text-lg">💧</span>
+        ¡Registrar Riego!
+        <span className="text-lg">✨</span>
       </button>
     </form>
   );
 }
 
 // ============ FORMULARIO DE CRECIMIENTO ============
-function FormCrecimiento({ nombres, onSuccess }: { nombres: string[]; onSuccess: () => void }) {
+function FormCrecimiento({ nombres, onSuccess, plantas }: { nombres: string[]; onSuccess: () => void; plantas: any[] }) {
   const [planta, setPlanta] = useState(nombres[0] || '');
   const [altura, setAltura] = useState('');
   const [numPlantas, setNumPlantas] = useState('1');
   const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0]);
+
+  const plantaActual = plantas.find(p => p.nombre === planta);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -154,43 +219,66 @@ function FormCrecimiento({ nombres, onSuccess }: { nombres: string[]; onSuccess:
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-200 p-4 space-y-4">
-      <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-        <Ruler size={16} className="text-green-500" /> Medición de Crecimiento
-      </h3>
-      
+    <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-sm rounded-3xl border-2 border-green-100 p-5 space-y-5 shadow-cute-lg">
+      <div className="flex items-center gap-2">
+        <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-emerald-400 rounded-xl flex items-center justify-center shadow-cute">
+          <span className="text-base">📏</span>
+        </div>
+        <h3 className="font-black text-gray-800">Medición de Crecimiento</h3>
+      </div>
+
+      {plantaActual && (
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-3 flex items-center gap-3 border border-green-100">
+          <span className="text-3xl">{plantaActual.emoji}</span>
+          <div>
+            <p className="font-bold text-sm text-green-900">{plantaActual.nombre}</p>
+            <p className="text-[10px] text-green-600">{plantaActual.fase_actual}</p>
+          </div>
+        </div>
+      )}
+
       <div>
-        <label className="text-xs font-medium text-gray-600 mb-1 block">Planta</label>
-        <select value={planta} onChange={e => setPlanta(e.target.value)} className="w-full p-2.5 rounded-lg border border-gray-200 text-sm bg-gray-50 focus:ring-2 focus:ring-green-300 outline-none">
-          {nombres.map(n => <option key={n} value={n}>{n}</option>)}
+        <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
+          <span>🌱</span> Planta
+        </label>
+        <select value={planta} onChange={e => setPlanta(e.target.value)} className="w-full p-3 rounded-xl border-2 border-green-100 text-sm bg-green-50/50 focus:ring-2 focus:ring-green-300 outline-none font-medium">
+          {nombres.map(n => <option key={n} value={n}>{plantas.find(p => p.nombre === n)?.emoji} {n}</option>)}
         </select>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-xs font-medium text-gray-600 mb-1 block">Altura (cm)</label>
-          <input type="number" step="0.1" value={altura} onChange={e => setAltura(e.target.value)} placeholder="Ej: 12.5" className="w-full p-2.5 rounded-lg border border-gray-200 text-sm bg-gray-50 focus:ring-2 focus:ring-green-300 outline-none" />
+          <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
+            <span>📐</span> Altura (cm)
+          </label>
+          <input type="number" step="0.1" value={altura} onChange={e => setAltura(e.target.value)} placeholder="Ej: 12.5" className="w-full p-3 rounded-xl border-2 border-green-100 text-sm bg-green-50/50 focus:ring-2 focus:ring-green-300 outline-none font-medium" />
         </div>
         <div>
-          <label className="text-xs font-medium text-gray-600 mb-1 block">Nº plantas</label>
-          <input type="number" value={numPlantas} onChange={e => setNumPlantas(e.target.value)} className="w-full p-2.5 rounded-lg border border-gray-200 text-sm bg-gray-50 focus:ring-2 focus:ring-green-300 outline-none" />
+          <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
+            <span>🌿</span> Nº plantas
+          </label>
+          <input type="number" value={numPlantas} onChange={e => setNumPlantas(e.target.value)} className="w-full p-3 rounded-xl border-2 border-green-100 text-sm bg-green-50/50 focus:ring-2 focus:ring-green-300 outline-none font-medium" />
         </div>
       </div>
 
       <div>
-        <label className="text-xs font-medium text-gray-600 mb-1 block">Fecha</label>
-        <input type="date" value={fecha} onChange={e => setFecha(e.target.value)} className="w-full p-2.5 rounded-lg border border-gray-200 text-sm bg-gray-50 focus:ring-2 focus:ring-green-300 outline-none" />
+        <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
+          <span>📅</span> Fecha
+        </label>
+        <input type="date" value={fecha} onChange={e => setFecha(e.target.value)} className="w-full p-3 rounded-xl border-2 border-green-100 text-sm bg-green-50/50 focus:ring-2 focus:ring-green-300 outline-none font-medium" />
       </div>
 
-      <button type="submit" className="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl font-medium text-sm transition-all active:scale-[0.98]">
-        📏 Registrar Medición
+      <button type="submit" className="w-full py-3.5 bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 text-white rounded-2xl font-black text-sm transition-all btn-cute shadow-lg shadow-green-200 border-2 border-white/50 flex items-center justify-center gap-2">
+        <span className="text-lg">📏</span>
+        ¡Registrar Medición!
+        <span className="text-lg">🌱</span>
       </button>
     </form>
   );
 }
 
 // ============ FORMULARIO DE SALUD ============
-function FormSalud({ nombres, onSuccess }: { nombres: string[]; onSuccess: () => void }) {
+function FormSalud({ nombres, onSuccess, plantas }: { nombres: string[]; onSuccess: () => void; plantas: any[] }) {
   const [planta, setPlanta] = useState(nombres[0] || '');
   const [sintoma, setSintoma] = useState('');
   const [causa, setCausa] = useState('');
@@ -199,7 +287,16 @@ function FormSalud({ nombres, onSuccess }: { nombres: string[]; onSuccess: () =>
   const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0]);
   const [fechaRevision, setFechaRevision] = useState('');
 
-  const sintomasRapidos = ['Hojas amarillas', 'Manchas en hojas', 'Pulgones', 'Hojas caídas', 'Tallo débil', 'Moho blanco'];
+  const sintomasRapidos = [
+    { name: 'Hojas amarillas', emoji: '🍂' },
+    { name: 'Manchas en hojas', emoji: '🟤' },
+    { name: 'Pulgones', emoji: '🐛' },
+    { name: 'Hojas caídas', emoji: '😢' },
+    { name: 'Tallo débil', emoji: '🥀' },
+    { name: 'Moho blanco', emoji: '🍄' },
+  ];
+
+  const plantaActual = plantas.find(p => p.nombre === planta);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -220,76 +317,115 @@ function FormSalud({ nombres, onSuccess }: { nombres: string[]; onSuccess: () =>
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-200 p-4 space-y-4">
-      <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-        <Bug size={16} className="text-orange-500" /> Incidencia de Salud
-      </h3>
-      
+    <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-sm rounded-3xl border-2 border-orange-100 p-5 space-y-5 shadow-cute-lg">
+      <div className="flex items-center gap-2">
+        <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-amber-400 rounded-xl flex items-center justify-center shadow-cute">
+          <span className="text-base">🐛</span>
+        </div>
+        <h3 className="font-black text-gray-800">Incidencia de Salud</h3>
+      </div>
+
+      {plantaActual && (
+        <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl p-3 flex items-center gap-3 border border-orange-100">
+          <span className="text-3xl">{plantaActual.emoji}</span>
+          <div>
+            <p className="font-bold text-sm text-orange-900">{plantaActual.nombre}</p>
+            <p className="text-[10px] text-orange-600">{plantaActual.fase_actual}</p>
+          </div>
+        </div>
+      )}
+
       <div>
-        <label className="text-xs font-medium text-gray-600 mb-1 block">Planta</label>
-        <select value={planta} onChange={e => setPlanta(e.target.value)} className="w-full p-2.5 rounded-lg border border-gray-200 text-sm bg-gray-50 focus:ring-2 focus:ring-orange-300 outline-none">
-          {nombres.map(n => <option key={n} value={n}>{n}</option>)}
+        <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
+          <span>🌱</span> Planta
+        </label>
+        <select value={planta} onChange={e => setPlanta(e.target.value)} className="w-full p-3 rounded-xl border-2 border-orange-100 text-sm bg-orange-50/50 focus:ring-2 focus:ring-orange-300 outline-none font-medium">
+          {nombres.map(n => <option key={n} value={n}>{plantas.find(p => p.nombre === n)?.emoji} {n}</option>)}
         </select>
       </div>
 
       <div>
-        <label className="text-xs font-medium text-gray-600 mb-1 block">Síntoma (rápido)</label>
-        <div className="flex flex-wrap gap-1.5">
+        <label className="text-xs font-bold text-gray-600 mb-2 block flex items-center gap-1">
+          <span>🔍</span> Síntoma (toca uno o escribe)
+        </label>
+        <div className="flex flex-wrap gap-2 mb-2">
           {sintomasRapidos.map(s => (
             <button
-              key={s}
+              key={s.name}
               type="button"
-              onClick={() => setSintoma(s)}
-              className={`px-2 py-1 rounded-lg text-xs border transition-all ${
-                sintoma === s ? 'bg-orange-500 text-white border-orange-500' : 'bg-gray-50 text-gray-700 border-gray-200'
+              onClick={() => setSintoma(s.name)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold border-2 transition-all btn-cute flex items-center gap-1 ${
+                sintoma === s.name 
+                  ? 'bg-gradient-to-r from-orange-400 to-amber-400 text-white border-white shadow-lg' 
+                  : 'bg-white text-gray-700 border-gray-100 hover:border-orange-200'
               }`}
             >
-              {s}
+              <span>{s.emoji}</span>
+              {s.name}
             </button>
           ))}
         </div>
-        <input type="text" value={sintoma} onChange={e => setSintoma(e.target.value)} placeholder="O escribe otro síntoma..." className="w-full mt-2 p-2.5 rounded-lg border border-gray-200 text-sm bg-gray-50 focus:ring-2 focus:ring-orange-300 outline-none" />
+        <input type="text" value={sintoma} onChange={e => setSintoma(e.target.value)} placeholder="O escribe otro síntoma..." className="w-full p-3 rounded-xl border-2 border-orange-100 text-sm bg-orange-50/50 focus:ring-2 focus:ring-orange-300 outline-none font-medium" />
       </div>
 
       <div>
-        <label className="text-xs font-medium text-gray-600 mb-1 block">Causa probable</label>
-        <input type="text" value={causa} onChange={e => setCausa(e.target.value)} placeholder="Ej: Exceso de humedad" className="w-full p-2.5 rounded-lg border border-gray-200 text-sm bg-gray-50 focus:ring-2 focus:ring-orange-300 outline-none" />
+        <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
+          <span>🤔</span> Causa probable
+        </label>
+        <input type="text" value={causa} onChange={e => setCausa(e.target.value)} placeholder="Ej: Exceso de humedad" className="w-full p-3 rounded-xl border-2 border-orange-100 text-sm bg-orange-50/50 focus:ring-2 focus:ring-orange-300 outline-none font-medium" />
       </div>
 
       <div>
-        <label className="text-xs font-medium text-gray-600 mb-1 block">Tratamiento natural</label>
-        <input type="text" value={tratamiento} onChange={e => setTratamiento(e.target.value)} placeholder="Ej: Infusión de cola de caballo" className="w-full p-2.5 rounded-lg border border-gray-200 text-sm bg-gray-50 focus:ring-2 focus:ring-orange-300 outline-none" />
+        <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
+          <span>💊</span> Tratamiento natural
+        </label>
+        <input type="text" value={tratamiento} onChange={e => setTratamiento(e.target.value)} placeholder="Ej: Infusión de cola de caballo" className="w-full p-3 rounded-xl border-2 border-orange-100 text-sm bg-orange-50/50 focus:ring-2 focus:ring-orange-300 outline-none font-medium" />
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-xs font-medium text-gray-600 mb-1 block">Estado</label>
-          <select value={estado} onChange={e => setEstado(e.target.value as any)} className="w-full p-2.5 rounded-lg border border-gray-200 text-sm bg-gray-50 outline-none">
-            <option value="En seguimiento">En seguimiento</option>
-            <option value="Resuelto">Resuelto</option>
+          <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
+            <span>📋</span> Estado
+          </label>
+          <select value={estado} onChange={e => setEstado(e.target.value as any)} className="w-full p-3 rounded-xl border-2 border-orange-100 text-sm bg-orange-50/50 outline-none font-medium">
+            <option value="En seguimiento">🔍 En seguimiento</option>
+            <option value="Resuelto">✅ Resuelto</option>
           </select>
         </div>
         <div>
-          <label className="text-xs font-medium text-gray-600 mb-1 block">Fecha revisión</label>
-          <input type="date" value={fechaRevision} onChange={e => setFechaRevision(e.target.value)} className="w-full p-2.5 rounded-lg border border-gray-200 text-sm bg-gray-50 outline-none" />
+          <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
+            <span>📅</span> Revisión
+          </label>
+          <input type="date" value={fechaRevision} onChange={e => setFechaRevision(e.target.value)} className="w-full p-3 rounded-xl border-2 border-orange-100 text-sm bg-orange-50/50 outline-none font-medium" />
         </div>
       </div>
 
-      <button type="submit" className="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-medium text-sm transition-all active:scale-[0.98]">
-        🐛 Registrar Incidencia
+      <button type="submit" className="w-full py-3.5 bg-gradient-to-r from-orange-400 to-amber-500 hover:from-orange-500 hover:to-amber-600 text-white rounded-2xl font-black text-sm transition-all btn-cute shadow-lg shadow-orange-200 border-2 border-white/50 flex items-center justify-center gap-2">
+        <span className="text-lg">🐛</span>
+        ¡Registrar Incidencia!
+        <span className="text-lg">💪</span>
       </button>
     </form>
   );
 }
 
 // ============ FORMULARIO DE COSECHA ============
-function FormCosecha({ nombres, onSuccess }: { nombres: string[]; onSuccess: () => void }) {
+function FormCosecha({ nombres, onSuccess, plantas }: { nombres: string[]; onSuccess: () => void; plantas: any[] }) {
   const [planta, setPlanta] = useState(nombres[0] || '');
   const [parte, setParte] = useState('Hojas');
   const [cantidad, setCantidad] = useState('');
   const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0]);
 
-  const partes = ['Hojas', 'Puntas', 'Tallos', 'Flores', 'Frutos', 'Raíces'];
+  const partes = [
+    { name: 'Hojas', emoji: '🍃' },
+    { name: 'Puntas', emoji: '🌿' },
+    { name: 'Tallos', emoji: '🌾' },
+    { name: 'Flores', emoji: '🌸' },
+    { name: 'Frutos', emoji: '🫑' },
+    { name: 'Raíces', emoji: '🥕' },
+  ];
+
+  const plantaActual = plantas.find(p => p.nombre === planta);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -300,48 +436,74 @@ function FormCosecha({ nombres, onSuccess }: { nombres: string[]; onSuccess: () 
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-200 p-4 space-y-4">
-      <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-        <Scissors size={16} className="text-purple-500" /> Registrar Cosecha
-      </h3>
-      
+    <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-sm rounded-3xl border-2 border-purple-100 p-5 space-y-5 shadow-cute-lg">
+      <div className="flex items-center gap-2">
+        <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-400 rounded-xl flex items-center justify-center shadow-cute">
+          <span className="text-base">✂️</span>
+        </div>
+        <h3 className="font-black text-gray-800">Registrar Cosecha</h3>
+      </div>
+
+      {plantaActual && (
+        <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-3 flex items-center gap-3 border border-purple-100">
+          <span className="text-3xl">{plantaActual.emoji}</span>
+          <div>
+            <p className="font-bold text-sm text-purple-900">{plantaActual.nombre}</p>
+            <p className="text-[10px] text-purple-600">{plantaActual.fase_actual}</p>
+          </div>
+        </div>
+      )}
+
       <div>
-        <label className="text-xs font-medium text-gray-600 mb-1 block">Planta</label>
-        <select value={planta} onChange={e => setPlanta(e.target.value)} className="w-full p-2.5 rounded-lg border border-gray-200 text-sm bg-gray-50 focus:ring-2 focus:ring-purple-300 outline-none">
-          {nombres.map(n => <option key={n} value={n}>{n}</option>)}
+        <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
+          <span>🌱</span> Planta
+        </label>
+        <select value={planta} onChange={e => setPlanta(e.target.value)} className="w-full p-3 rounded-xl border-2 border-purple-100 text-sm bg-purple-50/50 focus:ring-2 focus:ring-purple-300 outline-none font-medium">
+          {nombres.map(n => <option key={n} value={n}>{plantas.find(p => p.nombre === n)?.emoji} {n}</option>)}
         </select>
       </div>
 
       <div>
-        <label className="text-xs font-medium text-gray-600 mb-1 block">Parte cosechada</label>
-        <div className="flex flex-wrap gap-1.5">
+        <label className="text-xs font-bold text-gray-600 mb-2 block flex items-center gap-1">
+          <span>🌿</span> Parte cosechada
+        </label>
+        <div className="grid grid-cols-3 gap-2">
           {partes.map(p => (
             <button
-              key={p}
+              key={p.name}
               type="button"
-              onClick={() => setParte(p)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                parte === p ? 'bg-purple-500 text-white border-purple-500' : 'bg-gray-50 text-gray-700 border-gray-200'
+              onClick={() => setParte(p.name)}
+              className={`p-2.5 rounded-xl text-xs font-bold border-2 transition-all btn-cute flex flex-col items-center gap-0.5 ${
+                parte === p.name 
+                  ? 'bg-gradient-to-r from-purple-400 to-pink-400 text-white border-white shadow-lg scale-[1.02]' 
+                  : 'bg-white text-gray-700 border-gray-100 hover:border-purple-200'
               }`}
             >
-              {p}
+              <span className="text-lg">{p.emoji}</span>
+              <span>{p.name}</span>
             </button>
           ))}
         </div>
       </div>
 
       <div>
-        <label className="text-xs font-medium text-gray-600 mb-1 block">Cantidad estimada (unidades)</label>
-        <input type="number" value={cantidad} onChange={e => setCantidad(e.target.value)} placeholder="Ej: 10" className="w-full p-2.5 rounded-lg border border-gray-200 text-sm bg-gray-50 focus:ring-2 focus:ring-purple-300 outline-none" />
+        <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
+          <span>🔢</span> Cantidad (unidades)
+        </label>
+        <input type="number" value={cantidad} onChange={e => setCantidad(e.target.value)} placeholder="Ej: 10" className="w-full p-3 rounded-xl border-2 border-purple-100 text-sm bg-purple-50/50 focus:ring-2 focus:ring-purple-300 outline-none font-medium" />
       </div>
 
       <div>
-        <label className="text-xs font-medium text-gray-600 mb-1 block">Fecha</label>
-        <input type="date" value={fecha} onChange={e => setFecha(e.target.value)} className="w-full p-2.5 rounded-lg border border-gray-200 text-sm bg-gray-50 focus:ring-2 focus:ring-purple-300 outline-none" />
+        <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
+          <span>📅</span> Fecha
+        </label>
+        <input type="date" value={fecha} onChange={e => setFecha(e.target.value)} className="w-full p-3 rounded-xl border-2 border-purple-100 text-sm bg-purple-50/50 focus:ring-2 focus:ring-purple-300 outline-none font-medium" />
       </div>
 
-      <button type="submit" className="w-full py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-xl font-medium text-sm transition-all active:scale-[0.98]">
-        ✂️ Registrar Cosecha
+      <button type="submit" className="w-full py-3.5 bg-gradient-to-r from-purple-400 to-pink-500 hover:from-purple-500 hover:to-pink-600 text-white rounded-2xl font-black text-sm transition-all btn-cute shadow-lg shadow-purple-200 border-2 border-white/50 flex items-center justify-center gap-2">
+        <span className="text-lg">✂️</span>
+        ¡Registrar Cosecha!
+        <span className="text-lg">🎉</span>
       </button>
     </form>
   );

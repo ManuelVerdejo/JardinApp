@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
-import { TrendingUp, Droplets, Scissors, Heart } from 'lucide-react';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { TrendingUp, Droplets, Scissors, Heart, Sparkles, Star } from 'lucide-react';
 
 export default function Analisis() {
   const plantas = useLiveQuery(() => db.plantas.toArray()) || [];
@@ -19,7 +19,6 @@ export default function Analisis() {
     if (selectedPlanta !== 'all') {
       filtered = bitacora.filter(b => b.planta_nombre === selectedPlanta);
     }
-    // Agrupar por fecha y planta
     const grouped: Record<string, Record<string, number>> = {};
     filtered.forEach(b => {
       if (!grouped[b.fecha]) grouped[b.fecha] = {};
@@ -36,7 +35,7 @@ export default function Analisis() {
       });
   })();
 
-  // ============ DATOS DE RIEGO (últimos 14 días) ============
+  // ============ DATOS DE RIEGO ============
   const riegoData = (() => {
     const last14Days: string[] = [];
     for (let i = 13; i >= 0; i--) {
@@ -57,8 +56,10 @@ export default function Analisis() {
       grouped[c.planta_nombre] = (grouped[c.planta_nombre] || 0) + c.cantidad_estimada;
     });
     return Object.entries(grouped).map(([nombre, cantidad]) => ({
-      nombre: nombre.length > 10 ? nombre.slice(0, 10) + '…' : nombre,
+      nombre: nombre.length > 8 ? nombre.slice(0, 8) + '…' : nombre,
+      nombreCompleto: nombre,
       cantidad,
+      emoji: plantas.find(p => p.nombre === nombre)?.emoji || '🌱',
     }));
   })();
 
@@ -67,48 +68,94 @@ export default function Analisis() {
     const resueltos = salud.filter(s => s.estado === 'Resuelto').length;
     const seguimiento = salud.filter(s => s.estado === 'En seguimiento').length;
     return [
-      { name: 'Resueltos', value: resueltos, color: '#22c55e' },
-      { name: 'En seguimiento', value: seguimiento, color: '#f59e0b' },
+      { name: 'Resueltos', value: resueltos, color: '#34d399' },
+      { name: 'En seguimiento', value: seguimiento, color: '#fbbf24' },
     ];
   })();
 
   const totalSalud = saludData.reduce((acc, d) => acc + d.value, 0);
   const porcentajeResueltos = totalSalud > 0 ? Math.round((saludData[0].value / totalSalud) * 100) : 0;
 
-  // Colores para las líneas de crecimiento
-  const lineColors = ['#22c55e', '#3b82f6', '#ef4444', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16', '#f97316'];
+  const lineColors = ['#34d399', '#60a5fa', '#f472b6', '#fbbf24', '#a78bfa', '#fb923c', '#22d3ee', '#a3e635', '#f97316'];
+
+  // Stats generales
+  const totalRiegos = riegos.length;
+  const totalCosechas = cosechas.reduce((acc, c) => acc + c.cantidad_estimada, 0);
+  const diasActivos = new Set(riegos.map(r => r.fecha)).size;
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-lg font-bold text-gray-900">📊 Análisis y Estadísticas</h2>
+    <div className="space-y-5">
+      {/* Header */}
+      <div className="text-center animate-fade-in">
+        <span className="text-4xl animate-float">📊</span>
+        <h2 className="text-lg font-black text-gray-800 mt-2">Análisis y Estadísticas</h2>
+        <p className="text-xs text-gray-500 font-medium">Mira cómo crece tu huerto 🌟</p>
+      </div>
+
+      {/* Stats resumen */}
+      <div className="grid grid-cols-3 gap-2">
+        <div className="bg-gradient-to-br from-blue-100 to-cyan-100 rounded-2xl p-3 text-center shadow-cute sticker border-2 border-white animate-fade-in">
+          <span className="text-xl">💧</span>
+          <p className="text-xl font-black text-blue-700 mt-1">{totalRiegos}</p>
+          <p className="text-[10px] text-blue-600 font-bold">Riegos</p>
+        </div>
+        <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl p-3 text-center shadow-cute sticker border-2 border-white animate-fade-in" style={{ animationDelay: '0.1s' }}>
+          <span className="text-xl">✂️</span>
+          <p className="text-xl font-black text-purple-700 mt-1">{totalCosechas}</p>
+          <p className="text-[10px] text-purple-600 font-bold">Cosechas</p>
+        </div>
+        <div className="bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl p-3 text-center shadow-cute sticker border-2 border-white animate-fade-in" style={{ animationDelay: '0.2s' }}>
+          <span className="text-xl">📅</span>
+          <p className="text-xl font-black text-green-700 mt-1">{diasActivos}</p>
+          <p className="text-[10px] text-green-600 font-bold">Días activos</p>
+        </div>
+      </div>
 
       {/* Filtro de planta */}
-      <div>
-        <label className="text-xs font-medium text-gray-600 mb-1 block">Filtrar por planta</label>
+      <div className="glass rounded-2xl p-3 shadow-cute">
+        <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
+          <span>🌱</span> Filtrar por planta
+        </label>
         <select
           value={selectedPlanta}
           onChange={e => setSelectedPlanta(e.target.value)}
-          className="w-full p-2.5 rounded-lg border border-gray-200 text-sm bg-white focus:ring-2 focus:ring-green-300 outline-none"
+          className="w-full p-2.5 rounded-xl border-2 border-green-100 text-sm bg-green-50/50 focus:ring-2 focus:ring-green-300 outline-none font-medium"
         >
-          <option value="all">Todas las plantas</option>
+          <option value="all">✨ Todas las plantas</option>
           {plantas.map(p => <option key={p.planta_id} value={p.nombre}>{p.emoji} {p.nombre}</option>)}
         </select>
       </div>
 
       {/* Gráfico de Crecimiento */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-4">
-        <h3 className="font-semibold text-gray-800 text-sm flex items-center gap-2 mb-3">
-          <TrendingUp size={16} className="text-green-500" />
-          Evolución del Crecimiento (cm)
+      <div className="bg-white/80 backdrop-blur-sm rounded-3xl border-2 border-green-100 p-4 shadow-cute-lg animate-fade-in">
+        <h3 className="font-black text-gray-800 text-sm flex items-center gap-2 mb-3">
+          <div className="w-7 h-7 bg-gradient-to-br from-green-400 to-emerald-400 rounded-xl flex items-center justify-center shadow-cute">
+            <TrendingUp size={14} className="text-white" />
+          </div>
+          Evolución del Crecimiento
+          <span className="text-xs">📈</span>
         </h3>
         {crecimientoData.length > 0 ? (
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={crecimientoData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="fecha" tick={{ fontSize: 10 }} />
-              <YAxis tick={{ fontSize: 10 }} />
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} />
-              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <defs>
+                <linearGradient id="colorGreen" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#34d399" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#34d399" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" strokeOpacity={0.5} />
+              <XAxis dataKey="fecha" tick={{ fontSize: 10, fill: '#6b7280' }} />
+              <YAxis tick={{ fontSize: 10, fill: '#6b7280' }} />
+              <Tooltip 
+                contentStyle={{ 
+                  fontSize: 12, 
+                  borderRadius: 12, 
+                  border: '2px solid #d1fae5',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                  fontFamily: 'Nunito'
+                }} 
+              />
               {selectedPlanta === 'all'
                 ? plantas.map((p, i) => {
                     const hasData = crecimientoData.some(d => d[p.nombre] !== undefined);
@@ -119,77 +166,123 @@ export default function Analisis() {
                         type="monotone"
                         dataKey={p.nombre}
                         stroke={lineColors[i % lineColors.length]}
-                        strokeWidth={2}
-                        dot={{ r: 3 }}
+                        strokeWidth={2.5}
+                        dot={{ r: 4, fill: lineColors[i % lineColors.length], strokeWidth: 2, stroke: '#fff' }}
+                        activeDot={{ r: 6 }}
                         connectNulls
                       />
                     );
                   })
-                : <Line type="monotone" dataKey={selectedPlanta} stroke="#22c55e" strokeWidth={2} dot={{ r: 4 }} />
+                : <Line type="monotone" dataKey={selectedPlanta} stroke="#34d399" strokeWidth={3} dot={{ r: 5, fill: '#34d399', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 7 }} />
               }
             </LineChart>
           </ResponsiveContainer>
         ) : (
-          <p className="text-center text-gray-400 text-sm py-8">Sin datos de crecimiento</p>
+          <div className="text-center py-8">
+            <span className="text-4xl">🌱</span>
+            <p className="text-gray-400 text-sm mt-2 font-medium">Sin datos de crecimiento aún</p>
+          </div>
         )}
       </div>
 
       {/* Gráfico de Riegos */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-4">
-        <h3 className="font-semibold text-gray-800 text-sm flex items-center gap-2 mb-3">
-          <Droplets size={16} className="text-blue-500" />
-          Frecuencia de Riego (últimos 14 días)
+      <div className="bg-white/80 backdrop-blur-sm rounded-3xl border-2 border-blue-100 p-4 shadow-cute-lg animate-fade-in">
+        <h3 className="font-black text-gray-800 text-sm flex items-center gap-2 mb-3">
+          <div className="w-7 h-7 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-xl flex items-center justify-center shadow-cute">
+            <Droplets size={14} className="text-white" />
+          </div>
+          Frecuencia de Riego
+          <span className="text-xs">💧</span>
         </h3>
         <ResponsiveContainer width="100%" height={160}>
           <BarChart data={riegoData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-            <XAxis dataKey="fecha" tick={{ fontSize: 9 }} />
-            <YAxis tick={{ fontSize: 10 }} allowDecimals={false} />
-            <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} />
-            <Bar dataKey="riegos" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+            <defs>
+              <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#60a5fa" />
+                <stop offset="100%" stopColor="#3b82f6" />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" strokeOpacity={0.5} />
+            <XAxis dataKey="fecha" tick={{ fontSize: 9, fill: '#6b7280' }} />
+            <YAxis tick={{ fontSize: 10, fill: '#6b7280' }} allowDecimals={false} />
+            <Tooltip 
+              contentStyle={{ 
+                fontSize: 12, 
+                borderRadius: 12, 
+                border: '2px solid #bfdbfe',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                fontFamily: 'Nunito'
+              }} 
+            />
+            <Bar dataKey="riegos" fill="url(#barGradient)" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
 
       {/* Gráfico de Cosechas */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-4">
-        <h3 className="font-semibold text-gray-800 text-sm flex items-center gap-2 mb-3">
-          <Scissors size={16} className="text-purple-500" />
+      <div className="bg-white/80 backdrop-blur-sm rounded-3xl border-2 border-purple-100 p-4 shadow-cute-lg animate-fade-in">
+        <h3 className="font-black text-gray-800 text-sm flex items-center gap-2 mb-3">
+          <div className="w-7 h-7 bg-gradient-to-br from-purple-400 to-pink-400 rounded-xl flex items-center justify-center shadow-cute">
+            <Scissors size={14} className="text-white" />
+          </div>
           Balance de Cosechas
+          <span className="text-xs">🎉</span>
         </h3>
         {cosechaData.length > 0 ? (
           <ResponsiveContainer width="100%" height={180}>
             <BarChart data={cosechaData} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis type="number" tick={{ fontSize: 10 }} allowDecimals={false} />
-              <YAxis type="category" dataKey="nombre" tick={{ fontSize: 10 }} width={80} />
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} />
-              <Bar dataKey="cantidad" fill="#8b5cf6" radius={[0, 4, 4, 0]} />
+              <defs>
+                <linearGradient id="barPurple" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#c084fc" />
+                  <stop offset="100%" stopColor="#a855f7" />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" strokeOpacity={0.5} />
+              <XAxis type="number" tick={{ fontSize: 10, fill: '#6b7280' }} allowDecimals={false} />
+              <YAxis type="category" dataKey="nombre" tick={{ fontSize: 10, fill: '#6b7280' }} width={70} />
+              <Tooltip 
+                contentStyle={{ 
+                  fontSize: 12, 
+                  borderRadius: 12, 
+                  border: '2px solid #e9d5ff',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                  fontFamily: 'Nunito'
+                }} 
+                formatter={(value: number, name: string, props: any) => [`${value} unidades`, props.payload.nombreCompleto]}
+              />
+              <Bar dataKey="cantidad" fill="url(#barPurple)" radius={[0, 8, 8, 0]} />
             </BarChart>
           </ResponsiveContainer>
         ) : (
-          <p className="text-center text-gray-400 text-sm py-8">Sin datos de cosecha</p>
+          <div className="text-center py-8">
+            <span className="text-4xl">✂️</span>
+            <p className="text-gray-400 text-sm mt-2 font-medium">Sin cosechas registradas</p>
+          </div>
         )}
       </div>
 
       {/* Tasa de resolución de salud */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-4">
-        <h3 className="font-semibold text-gray-800 text-sm flex items-center gap-2 mb-3">
-          <Heart size={16} className="text-red-500" />
-          Tasa de Resolución de Salud
+      <div className="bg-white/80 backdrop-blur-sm rounded-3xl border-2 border-pink-100 p-4 shadow-cute-lg animate-fade-in">
+        <h3 className="font-black text-gray-800 text-sm flex items-center gap-2 mb-3">
+          <div className="w-7 h-7 bg-gradient-to-br from-pink-400 to-rose-400 rounded-xl flex items-center justify-center shadow-cute">
+            <Heart size={14} className="text-white" />
+          </div>
+          Salud del Huerto
+          <span className="text-xs">💚</span>
         </h3>
-        <div className="flex items-center gap-4">
-          <div className="w-24 h-24 relative">
+        <div className="flex items-center gap-5">
+          <div className="w-28 h-28 relative">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={saludData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={25}
-                  outerRadius={40}
+                  innerRadius={30}
+                  outerRadius={48}
                   dataKey="value"
-                  strokeWidth={0}
+                  strokeWidth={3}
+                  stroke="#fff"
                 >
                   {saludData.map((entry, index) => (
                     <Cell key={index} fill={entry.color} />
@@ -197,22 +290,33 @@ export default function Analisis() {
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-lg font-bold text-gray-800">{porcentajeResueltos}%</span>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-2xl font-black text-gray-800">{porcentajeResueltos}%</span>
+              <span className="text-[9px] text-gray-500 font-bold">sano</span>
             </div>
           </div>
-          <div className="flex-1 space-y-2">
+          <div className="flex-1 space-y-3">
             {saludData.map((d, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: d.color }}></div>
-                <span className="text-xs text-gray-600">{d.name}: {d.value}</span>
+              <div key={i} className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2">
+                <div className="w-4 h-4 rounded-full shadow-sm" style={{ backgroundColor: d.color }}></div>
+                <span className="text-xs font-bold text-gray-700">{d.name}</span>
+                <span className="ml-auto text-sm font-black" style={{ color: d.color }}>{d.value}</span>
               </div>
             ))}
-            <p className="text-xs text-gray-500 mt-2">
-              Total: {totalSalud} incidencias registradas
+            <p className="text-[10px] text-gray-400 font-medium text-center">
+              Total: {totalSalud} incidencias
             </p>
           </div>
         </div>
+      </div>
+
+      {/* Footer */}
+      <div className="text-center pt-2 pb-4">
+        <p className="text-[10px] text-gray-400 font-medium flex items-center justify-center gap-1">
+          <Star size={10} className="text-yellow-400" />
+          Tus datos se guardan localmente
+          <Star size={10} className="text-yellow-400" />
+        </p>
       </div>
     </div>
   );

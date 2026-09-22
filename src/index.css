@@ -1,33 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
-/* Animaciones personalizadas */
-@keyframes slide-up {
-  from {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+/* ============ FUENTES ============ */
+
+/* ============ VARIABLES ============ */
+:root {
+  --mint: #b8f0d8;
+  --mint-dark: #6ee7a8;
+  --pink: #ffd6e0;
+  --pink-dark: #ff9eb5;
+  --lavender: #e0d4f7;
+  --lavender-dark: #b794f6;
+  --peach: #ffecd2;
+  --peach-dark: #ffb380;
+  --sky: #bae6fd;
+  --sky-dark: #7dd3fc;
+  --cream: #fffbeb;
+  --cream-dark: #fde68a;
 }
 
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.animate-slide-up {
-  animation: slide-up 0.3s ease-out;
-}
-
-.animate-fade-in {
-  animation: fade-in 0.2s ease-out;
-}
-
-/* Estilos base para mobile-first */
+/* ============ BASE ============ */
 * {
   -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
 }
 
 html {
@@ -35,16 +30,156 @@ html {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   overscroll-behavior-y: contain;
+  background: linear-gradient(180deg, #f0fdf4 0%, #ecfdf5 30%, #f0fdf4 60%, #fefce8 100%);
+  min-height: 100vh;
 }
 
-/* Scrollbar personalizada */
+#root {
+  min-height: 100vh;
+}
+
+/* ============ ANIMACIONES ============ */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
+
+@keyframes bounce-in {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.95); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slide-down {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(180deg); }
+}
+
+@keyframes drip {
+  0% { transform: translateY(-10px) scale(0.5); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: translateY(30px) scale(1); opacity: 0; }
+}
+
+@keyframes heart-float {
+  0% { transform: translateY(0) scale(0); opacity: 1; }
+  100% { transform: translateY(-60px) scale(1.2); opacity: 0; }
+}
+
+@keyframes grow {
+  0% { transform: scaleY(0); transform-origin: bottom; }
+  100% { transform: scaleY(1); transform-origin: bottom; }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+@keyframes rainbow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes confetti-fall {
+  0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100px) rotate(720deg); opacity: 0; }
+}
+
+.animate-float { animation: float 3s ease-in-out infinite; }
+.animate-wiggle { animation: wiggle 1s ease-in-out infinite; }
+.animate-bounce-in { animation: bounce-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+.animate-pop { animation: pop 0.3s ease-out; }
+.animate-slide-up { animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+.animate-slide-down { animation: slide-down 0.3s ease-out; }
+.animate-fade-in { animation: fade-in 0.4s ease-out; }
+.animate-sparkle { animation: sparkle 1.5s ease-in-out infinite; }
+.animate-drip { animation: drip 1s ease-in forwards; }
+.animate-heart { animation: heart-float 1.5s ease-out forwards; }
+.animate-grow { animation: grow 0.6s ease-out; }
+.animate-pulse-soft { animation: pulse-soft 2s ease-in-out infinite; }
+
+/* ============ UTILIDADES ============ */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.shadow-cute {
+  box-shadow: 0 4px 20px -4px rgba(34, 197, 94, 0.15), 0 2px 8px -2px rgba(0, 0, 0, 0.06);
+}
+
+.shadow-cute-lg {
+  box-shadow: 0 8px 30px -6px rgba(34, 197, 94, 0.2), 0 4px 12px -4px rgba(0, 0, 0, 0.08);
+}
+
+.shadow-pink {
+  box-shadow: 0 4px 20px -4px rgba(255, 158, 181, 0.3);
+}
+
+.shadow-blue {
+  box-shadow: 0 4px 20px -4px rgba(125, 211, 252, 0.3);
+}
+
+/* Pattern de fondo con hojitas */
+.bg-pattern {
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(184, 240, 216, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 214, 224, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(224, 212, 247, 0.2) 0%, transparent 50%);
+}
+
+/* Sticker style borders */
+.sticker {
+  border: 2.5px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(0, 0, 0, 0.02);
+}
+
+/* Cute scrollbar */
 ::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -52,34 +187,50 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 4px;
+  background: linear-gradient(180deg, #86efac, #6ee7b7);
+  border-radius: 10px;
 }
 
-/* Safe area para dispositivos con notch */
+/* Safe area */
 @supports (padding: env(safe-area-inset-bottom)) {
-  nav {
+  .safe-bottom {
     padding-bottom: env(safe-area-inset-bottom);
   }
 }
 
-/* Select styling para mobile */
+/* Select cute */
 select {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2386efac' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
   padding-right: 32px;
 }
 
-/* Input date styling */
-input[type="date"] {
-  appearance: none;
+/* Botón cute con efecto press */
+.btn-cute {
+  transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-/* Transitions suaves para cards */
-.transition-all {
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+.btn-cute:active {
+  transform: scale(0.95);
+}
+
+/* Gradiente rainbow para texto */
+.text-rainbow {
+  background: linear-gradient(90deg, #f472b6, #a78bfa, #60a5fa, #34d399, #fbbf24);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: rainbow 3s linear infinite;
+}
+
+/* Confetti */
+.confetti-piece {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  animation: confetti-fall 1.5s ease-out forwards;
 }
