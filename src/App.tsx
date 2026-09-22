@@ -5,7 +5,7 @@ import Dashboard from './pages/Dashboard';
 import Registro from './pages/Registro';
 import Analisis from './pages/Analisis';
 import FichaPlanta from './pages/FichaPlanta';
-import { default as Calendar } from './components/Calendar';
+import Calendar from './components/Calendar';
 import { Achievements } from './components/Achievements';
 import { VirtualGarden } from './components/VirtualGarden';
 import { ThemeProvider, useTheme } from './context/ThemeContext';

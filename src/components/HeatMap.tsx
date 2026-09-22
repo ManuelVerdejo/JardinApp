@@ -40,6 +40,7 @@ export function HeatMap() {
           <Icon emoji="🔥" size={14} />
         </div>
         <h3 className="font-black text-gray-800 dark:text-gray-200 text-xs sm:text-sm">Mapa de Riego</h3>
+        <span className="ml-auto text-[9px] text-gray-500 dark:text-gray-400">Últimos 90 días</span>
       </div>
 
       {/* Stats */}

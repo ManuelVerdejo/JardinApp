@@ -122,10 +122,12 @@ export default function Dashboard({ onOpenFicha }: Props) {
       <ConfettiOverlay pieces={pieces} />
 
       {/* Frase del día */}
-      <div className="glass rounded-2xl p-3 shadow-cute animate-fade-in">
+      <div className={`rounded-2xl p-3 shadow-cute animate-fade-in ${
+        isDark ? 'bg-gray-800/50 border border-gray-700' : 'glass'
+      }`}>
         <div className="flex items-center gap-2">
           <Rainbow size={20} className="animate-wiggle" />
-          <p className="text-xs font-bold text-green-700">{fraseDelDia}</p>
+          <p className={`text-xs font-bold ${isDark ? 'text-green-400' : 'text-green-700'}`}>{fraseDelDia}</p>
         </div>
       </div>
 
@@ -254,13 +256,18 @@ export default function Dashboard({ onOpenFicha }: Props) {
       <ProgressBadge />
 
       {/* Infografía semanal */}
-      <Tooltip content="Resumen de tu actividad de la última semana" position="top">
-        <div></div>
+      <Tooltip content="Resumen de tu actividad de los últimos 7 días" position="top">
+        <div className="relative">
+          <Infographic />
+        </div>
       </Tooltip>
-      <Infographic />
 
       {/* Mapa de calor */}
-      <HeatMap />
+      <Tooltip content="Visualización de tu actividad de riego en los últimos 90 días" position="top">
+        <div className="relative">
+          <HeatMap />
+        </div>
+      </Tooltip>
 
       {/* Línea de tiempo */}
       <Timeline />
@@ -273,7 +280,7 @@ export default function Dashboard({ onOpenFicha }: Props) {
 
       {/* Footer cute */}
       <div className="text-center pt-4 pb-2">
-        <p className="text-[10px] text-gray-400 dark:text-gray-500 font-medium">
+        <p className={`text-[10px] font-medium ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
           Toca una planta para ver su ficha completa ✨
         </p>
       </div>
