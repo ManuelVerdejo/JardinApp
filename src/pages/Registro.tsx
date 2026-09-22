@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
-import { Droplets, Ruler, Bug, Scissors, Check, Sparkles, Heart } from 'lucide-react';
+import { Icon } from '../components/Icon';
 import { useConfetti, ConfettiOverlay } from '../components/Confetti';
+import { WaterDrop, Ruler, Bug, Scissors, Banana, Coffee, Rice, Egg, Worm, TestTube, Sun, Leaf as LeafIcon, Flower, Pepper, Carrot, Check, Pill, Clipboard as ClipboardIcon } from '../components/Icons';
+import { Check as CheckLucide } from 'lucide-react';
 
 type FormType = 'riego' | 'crecimiento' | 'salud' | 'cosecha';
 
@@ -35,16 +37,16 @@ export default function Registro() {
       {showSuccess && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 animate-bounce-in">
           <div className="bg-gradient-to-r from-green-400 to-emerald-500 text-white px-5 py-3 rounded-2xl shadow-cute-lg flex items-center gap-2 border-2 border-white">
-            <span className="text-xl">✨</span>
+            <Check size={20} />
             <span className="text-sm font-black">¡Registrado con éxito!</span>
-            <span className="text-xl">💚</span>
+            <Icon emoji="💚" size={18} />
           </div>
         </div>
       )}
 
       {/* Header */}
       <div className="text-center animate-fade-in">
-        <span className="text-4xl animate-float">📝</span>
+        <Icon emoji="📝" size={40} className="mx-auto animate-float" />
         <h2 className="text-lg font-black text-gray-800 mt-2">Registro Rápido</h2>
         <p className="text-xs text-gray-500 font-medium">Añade datos a tu huerto en un toque</p>
       </div>
@@ -61,7 +63,7 @@ export default function Registro() {
                 : `bg-white text-gray-600 border-gray-100 hover:border-gray-200 shadow-sm`
             }`}
           >
-            <span className="text-base">{f.icon}</span>
+            <Icon emoji={f.icon} size={18} />
             {f.label}
           </button>
         ))}
@@ -95,9 +97,9 @@ function FormRiego({ nombres, onSuccess, plantas }: { nombres: string[]; onSucce
     { name: 'Infusión de arroz', emoji: '🌾' },
   ];
   const cantidades = [
-    { name: 'Poca', emoji: '💧' },
-    { name: 'Normal', emoji: '💧💧' },
-    { name: 'Mucha', emoji: '💧💧💧' },
+    { name: 'Poca', level: 1 },
+    { name: 'Normal', level: 2 },
+    { name: 'Mucha', level: 3 },
   ];
 
   const plantaActual = plantas.find(p => p.nombre === planta);
@@ -112,15 +114,14 @@ function FormRiego({ nombres, onSuccess, plantas }: { nombres: string[]; onSucce
     <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-sm rounded-3xl border-2 border-blue-100 p-5 space-y-5 shadow-cute-lg">
       <div className="flex items-center gap-2">
         <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-xl flex items-center justify-center shadow-cute">
-          <span className="text-base">💧</span>
+          <WaterDrop size={18} />
         </div>
         <h3 className="font-black text-gray-800">Registrar Riego</h3>
       </div>
       
-      {/* Planta seleccionada visual */}
       {plantaActual && (
         <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-3 flex items-center gap-3 border border-blue-100">
-          <span className="text-3xl">{plantaActual.emoji}</span>
+          <Icon emoji={plantaActual.emoji} size={32} />
           <div>
             <p className="font-bold text-sm text-blue-900">{plantaActual.nombre}</p>
             <p className="text-[10px] text-blue-600">{plantaActual.fase_actual}</p>
@@ -130,16 +131,16 @@ function FormRiego({ nombres, onSuccess, plantas }: { nombres: string[]; onSucce
 
       <div>
         <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
-          <span>🌱</span> Planta
+          <Icon emoji="🌱" size={14} /> Planta
         </label>
         <select value={planta} onChange={e => setPlanta(e.target.value)} className="w-full p-3 rounded-xl border-2 border-blue-100 text-sm bg-blue-50/50 focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none font-medium">
-          {nombres.map(n => <option key={n} value={n}>{plantas.find(p => p.nombre === n)?.emoji} {n}</option>)}
+          {nombres.map(n => <option key={n} value={n}>{n}</option>)}
         </select>
       </div>
 
       <div>
         <label className="text-xs font-bold text-gray-600 mb-2 block flex items-center gap-1">
-          <span>🧪</span> Tipo de riego
+          <TestTube size={14} /> Tipo de riego
         </label>
         <div className="grid grid-cols-2 gap-2">
           {tipos.map(t => (
@@ -153,7 +154,7 @@ function FormRiego({ nombres, onSuccess, plantas }: { nombres: string[]; onSucce
                   : 'bg-white text-gray-700 border-gray-100 hover:border-blue-200'
               }`}
             >
-              <span>{t.emoji}</span>
+              <Icon emoji={t.emoji} size={16} />
               <span className="truncate">{t.name}</span>
             </button>
           ))}
@@ -162,7 +163,7 @@ function FormRiego({ nombres, onSuccess, plantas }: { nombres: string[]; onSucce
 
       <div>
         <label className="text-xs font-bold text-gray-600 mb-2 block flex items-center gap-1">
-          <span>📊</span> Cantidad
+          <Icon emoji="📊" size={14} /> Cantidad
         </label>
         <div className="flex gap-2">
           {cantidades.map(c => (
@@ -176,9 +177,13 @@ function FormRiego({ nombres, onSuccess, plantas }: { nombres: string[]; onSucce
                   : 'bg-white text-gray-700 border-gray-100 hover:border-blue-200'
               }`}
             >
-              <div className="text-center">
-                <span className="text-sm block">{c.emoji}</span>
-                <span className="mt-0.5 block">{c.name}</span>
+              <div className="text-center flex flex-col items-center gap-1">
+                <div className="flex gap-0.5">
+                  {Array.from({ length: c.level }).map((_, i) => (
+                    <WaterDrop key={i} size={10} />
+                  ))}
+                </div>
+                <span className="mt-0.5">{c.name}</span>
               </div>
             </button>
           ))}
@@ -187,15 +192,15 @@ function FormRiego({ nombres, onSuccess, plantas }: { nombres: string[]; onSucce
 
       <div>
         <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
-          <span>📅</span> Fecha
+          <Icon emoji="📅" size={14} /> Fecha
         </label>
         <input type="date" value={fecha} onChange={e => setFecha(e.target.value)} className="w-full p-3 rounded-xl border-2 border-blue-100 text-sm bg-blue-50/50 focus:ring-2 focus:ring-blue-300 outline-none font-medium" />
       </div>
 
       <button type="submit" className="w-full py-3.5 bg-gradient-to-r from-blue-400 to-cyan-500 hover:from-blue-500 hover:to-cyan-600 text-white rounded-2xl font-black text-sm transition-all btn-cute shadow-lg shadow-blue-200 border-2 border-white/50 flex items-center justify-center gap-2">
-        <span className="text-lg">💧</span>
+        <WaterDrop size={20} />
         ¡Registrar Riego!
-        <span className="text-lg">✨</span>
+        <Icon emoji="✨" size={18} />
       </button>
     </form>
   );
@@ -222,14 +227,14 @@ function FormCrecimiento({ nombres, onSuccess, plantas }: { nombres: string[]; o
     <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-sm rounded-3xl border-2 border-green-100 p-5 space-y-5 shadow-cute-lg">
       <div className="flex items-center gap-2">
         <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-emerald-400 rounded-xl flex items-center justify-center shadow-cute">
-          <span className="text-base">📏</span>
+          <Ruler size={18} />
         </div>
         <h3 className="font-black text-gray-800">Medición de Crecimiento</h3>
       </div>
 
       {plantaActual && (
         <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-3 flex items-center gap-3 border border-green-100">
-          <span className="text-3xl">{plantaActual.emoji}</span>
+          <Icon emoji={plantaActual.emoji} size={32} />
           <div>
             <p className="font-bold text-sm text-green-900">{plantaActual.nombre}</p>
             <p className="text-[10px] text-green-600">{plantaActual.fase_actual}</p>
@@ -239,23 +244,23 @@ function FormCrecimiento({ nombres, onSuccess, plantas }: { nombres: string[]; o
 
       <div>
         <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
-          <span>🌱</span> Planta
+          <Icon emoji="🌱" size={14} /> Planta
         </label>
         <select value={planta} onChange={e => setPlanta(e.target.value)} className="w-full p-3 rounded-xl border-2 border-green-100 text-sm bg-green-50/50 focus:ring-2 focus:ring-green-300 outline-none font-medium">
-          {nombres.map(n => <option key={n} value={n}>{plantas.find(p => p.nombre === n)?.emoji} {n}</option>)}
+          {nombres.map(n => <option key={n} value={n}>{n}</option>)}
         </select>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
-            <span>📐</span> Altura (cm)
+            <Ruler size={14} /> Altura (cm)
           </label>
           <input type="number" step="0.1" value={altura} onChange={e => setAltura(e.target.value)} placeholder="Ej: 12.5" className="w-full p-3 rounded-xl border-2 border-green-100 text-sm bg-green-50/50 focus:ring-2 focus:ring-green-300 outline-none font-medium" />
         </div>
         <div>
           <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
-            <span>🌿</span> Nº plantas
+            <Icon emoji="🌿" size={14} /> Nº plantas
           </label>
           <input type="number" value={numPlantas} onChange={e => setNumPlantas(e.target.value)} className="w-full p-3 rounded-xl border-2 border-green-100 text-sm bg-green-50/50 focus:ring-2 focus:ring-green-300 outline-none font-medium" />
         </div>
@@ -263,15 +268,15 @@ function FormCrecimiento({ nombres, onSuccess, plantas }: { nombres: string[]; o
 
       <div>
         <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
-          <span>📅</span> Fecha
+          <Icon emoji="📅" size={14} /> Fecha
         </label>
         <input type="date" value={fecha} onChange={e => setFecha(e.target.value)} className="w-full p-3 rounded-xl border-2 border-green-100 text-sm bg-green-50/50 focus:ring-2 focus:ring-green-300 outline-none font-medium" />
       </div>
 
       <button type="submit" className="w-full py-3.5 bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 text-white rounded-2xl font-black text-sm transition-all btn-cute shadow-lg shadow-green-200 border-2 border-white/50 flex items-center justify-center gap-2">
-        <span className="text-lg">📏</span>
+        <Ruler size={20} />
         ¡Registrar Medición!
-        <span className="text-lg">🌱</span>
+        <Icon emoji="🌱" size={18} />
       </button>
     </form>
   );
@@ -320,14 +325,14 @@ function FormSalud({ nombres, onSuccess, plantas }: { nombres: string[]; onSucce
     <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-sm rounded-3xl border-2 border-orange-100 p-5 space-y-5 shadow-cute-lg">
       <div className="flex items-center gap-2">
         <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-amber-400 rounded-xl flex items-center justify-center shadow-cute">
-          <span className="text-base">🐛</span>
+          <Bug size={18} />
         </div>
         <h3 className="font-black text-gray-800">Incidencia de Salud</h3>
       </div>
 
       {plantaActual && (
         <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl p-3 flex items-center gap-3 border border-orange-100">
-          <span className="text-3xl">{plantaActual.emoji}</span>
+          <Icon emoji={plantaActual.emoji} size={32} />
           <div>
             <p className="font-bold text-sm text-orange-900">{plantaActual.nombre}</p>
             <p className="text-[10px] text-orange-600">{plantaActual.fase_actual}</p>
@@ -337,16 +342,16 @@ function FormSalud({ nombres, onSuccess, plantas }: { nombres: string[]; onSucce
 
       <div>
         <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
-          <span>🌱</span> Planta
+          <Icon emoji="🌱" size={14} /> Planta
         </label>
         <select value={planta} onChange={e => setPlanta(e.target.value)} className="w-full p-3 rounded-xl border-2 border-orange-100 text-sm bg-orange-50/50 focus:ring-2 focus:ring-orange-300 outline-none font-medium">
-          {nombres.map(n => <option key={n} value={n}>{plantas.find(p => p.nombre === n)?.emoji} {n}</option>)}
+          {nombres.map(n => <option key={n} value={n}>{n}</option>)}
         </select>
       </div>
 
       <div>
         <label className="text-xs font-bold text-gray-600 mb-2 block flex items-center gap-1">
-          <span>🔍</span> Síntoma (toca uno o escribe)
+          <Icon emoji="🔍" size={14} /> Síntoma (toca uno o escribe)
         </label>
         <div className="flex flex-wrap gap-2 mb-2">
           {sintomasRapidos.map(s => (
@@ -360,7 +365,7 @@ function FormSalud({ nombres, onSuccess, plantas }: { nombres: string[]; onSucce
                   : 'bg-white text-gray-700 border-gray-100 hover:border-orange-200'
               }`}
             >
-              <span>{s.emoji}</span>
+              <Icon emoji={s.emoji} size={14} />
               {s.name}
             </button>
           ))}
@@ -370,14 +375,14 @@ function FormSalud({ nombres, onSuccess, plantas }: { nombres: string[]; onSucce
 
       <div>
         <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
-          <span>🤔</span> Causa probable
+          <Icon emoji="🤔" size={14} /> Causa probable
         </label>
         <input type="text" value={causa} onChange={e => setCausa(e.target.value)} placeholder="Ej: Exceso de humedad" className="w-full p-3 rounded-xl border-2 border-orange-100 text-sm bg-orange-50/50 focus:ring-2 focus:ring-orange-300 outline-none font-medium" />
       </div>
 
       <div>
         <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
-          <span>💊</span> Tratamiento natural
+          <Pill size={14} /> Tratamiento natural
         </label>
         <input type="text" value={tratamiento} onChange={e => setTratamiento(e.target.value)} placeholder="Ej: Infusión de cola de caballo" className="w-full p-3 rounded-xl border-2 border-orange-100 text-sm bg-orange-50/50 focus:ring-2 focus:ring-orange-300 outline-none font-medium" />
       </div>
@@ -385,25 +390,25 @@ function FormSalud({ nombres, onSuccess, plantas }: { nombres: string[]; onSucce
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
-            <span>📋</span> Estado
+            <ClipboardIcon size={14} /> Estado
           </label>
           <select value={estado} onChange={e => setEstado(e.target.value as any)} className="w-full p-3 rounded-xl border-2 border-orange-100 text-sm bg-orange-50/50 outline-none font-medium">
-            <option value="En seguimiento">🔍 En seguimiento</option>
-            <option value="Resuelto">✅ Resuelto</option>
+            <option value="En seguimiento">En seguimiento</option>
+            <option value="Resuelto">Resuelto</option>
           </select>
         </div>
         <div>
           <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
-            <span>📅</span> Revisión
+            <Icon emoji="📅" size={14} /> Revisión
           </label>
           <input type="date" value={fechaRevision} onChange={e => setFechaRevision(e.target.value)} className="w-full p-3 rounded-xl border-2 border-orange-100 text-sm bg-orange-50/50 outline-none font-medium" />
         </div>
       </div>
 
       <button type="submit" className="w-full py-3.5 bg-gradient-to-r from-orange-400 to-amber-500 hover:from-orange-500 hover:to-amber-600 text-white rounded-2xl font-black text-sm transition-all btn-cute shadow-lg shadow-orange-200 border-2 border-white/50 flex items-center justify-center gap-2">
-        <span className="text-lg">🐛</span>
+        <Bug size={20} />
         ¡Registrar Incidencia!
-        <span className="text-lg">💪</span>
+        <Icon emoji="💪" size={18} />
       </button>
     </form>
   );
@@ -439,14 +444,14 @@ function FormCosecha({ nombres, onSuccess, plantas }: { nombres: string[]; onSuc
     <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-sm rounded-3xl border-2 border-purple-100 p-5 space-y-5 shadow-cute-lg">
       <div className="flex items-center gap-2">
         <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-400 rounded-xl flex items-center justify-center shadow-cute">
-          <span className="text-base">✂️</span>
+          <Scissors size={18} />
         </div>
         <h3 className="font-black text-gray-800">Registrar Cosecha</h3>
       </div>
 
       {plantaActual && (
         <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-3 flex items-center gap-3 border border-purple-100">
-          <span className="text-3xl">{plantaActual.emoji}</span>
+          <Icon emoji={plantaActual.emoji} size={32} />
           <div>
             <p className="font-bold text-sm text-purple-900">{plantaActual.nombre}</p>
             <p className="text-[10px] text-purple-600">{plantaActual.fase_actual}</p>
@@ -456,16 +461,16 @@ function FormCosecha({ nombres, onSuccess, plantas }: { nombres: string[]; onSuc
 
       <div>
         <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
-          <span>🌱</span> Planta
+          <Icon emoji="🌱" size={14} /> Planta
         </label>
         <select value={planta} onChange={e => setPlanta(e.target.value)} className="w-full p-3 rounded-xl border-2 border-purple-100 text-sm bg-purple-50/50 focus:ring-2 focus:ring-purple-300 outline-none font-medium">
-          {nombres.map(n => <option key={n} value={n}>{plantas.find(p => p.nombre === n)?.emoji} {n}</option>)}
+          {nombres.map(n => <option key={n} value={n}>{n}</option>)}
         </select>
       </div>
 
       <div>
         <label className="text-xs font-bold text-gray-600 mb-2 block flex items-center gap-1">
-          <span>🌿</span> Parte cosechada
+          <Icon emoji="🌿" size={14} /> Parte cosechada
         </label>
         <div className="grid grid-cols-3 gap-2">
           {partes.map(p => (
@@ -479,7 +484,7 @@ function FormCosecha({ nombres, onSuccess, plantas }: { nombres: string[]; onSuc
                   : 'bg-white text-gray-700 border-gray-100 hover:border-purple-200'
               }`}
             >
-              <span className="text-lg">{p.emoji}</span>
+              <Icon emoji={p.emoji} size={20} />
               <span>{p.name}</span>
             </button>
           ))}
@@ -488,23 +493,25 @@ function FormCosecha({ nombres, onSuccess, plantas }: { nombres: string[]; onSuc
 
       <div>
         <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
-          <span>🔢</span> Cantidad (unidades)
+          <Icon emoji="🔢" size={14} /> Cantidad (unidades)
         </label>
         <input type="number" value={cantidad} onChange={e => setCantidad(e.target.value)} placeholder="Ej: 10" className="w-full p-3 rounded-xl border-2 border-purple-100 text-sm bg-purple-50/50 focus:ring-2 focus:ring-purple-300 outline-none font-medium" />
       </div>
 
       <div>
         <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
-          <span>📅</span> Fecha
+          <Icon emoji="📅" size={14} /> Fecha
         </label>
         <input type="date" value={fecha} onChange={e => setFecha(e.target.value)} className="w-full p-3 rounded-xl border-2 border-purple-100 text-sm bg-purple-50/50 focus:ring-2 focus:ring-purple-300 outline-none font-medium" />
       </div>
 
       <button type="submit" className="w-full py-3.5 bg-gradient-to-r from-purple-400 to-pink-500 hover:from-purple-500 hover:to-pink-600 text-white rounded-2xl font-black text-sm transition-all btn-cute shadow-lg shadow-purple-200 border-2 border-white/50 flex items-center justify-center gap-2">
-        <span className="text-lg">✂️</span>
+        <Scissors size={20} />
         ¡Registrar Cosecha!
-        <span className="text-lg">🎉</span>
+        <Icon emoji="🎉" size={18} />
       </button>
     </form>
   );
 }
+
+

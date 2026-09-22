@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
-import { ArrowLeft, Sun, Droplets, Bug, Scissors, Ruler, AlertTriangle, Sparkles, Heart, Clock } from 'lucide-react';
-import { PlantFace } from '../components/PlantFace';
+import { Icon } from '../components/Icon';
+import { WaterDrop, Sun, Scissors, Alert as AlertIcon, Check } from '../components/Icons';
+import { ArrowLeft } from 'lucide-react';
 
 interface Props {
   nombre: string;
@@ -23,14 +24,13 @@ export default function FichaPlanta({ nombre, onBack }: Props) {
   if (!planta) {
     return (
       <div className="text-center py-12">
-        <span className="text-5xl">🌱</span>
+        <Icon emoji="🌱" size={50} className="mx-auto" />
         <p className="text-gray-500 mt-4 font-medium">Planta no encontrada</p>
         <button onClick={onBack} className="mt-4 text-green-600 font-bold btn-cute">← Volver</button>
       </div>
     );
   }
 
-  // Calcular estado de riego
   const ultimoRiego = riegos[0];
   const diasDesdeRiego = ultimoRiego
     ? Math.floor((Date.now() - new Date(ultimoRiego.fecha).getTime()) / (1000 * 60 * 60 * 24))
@@ -49,7 +49,6 @@ export default function FichaPlanta({ nombre, onBack }: Props) {
 
   return (
     <div className="space-y-4 animate-fade-in">
-      {/* Back button */}
       <button onClick={onBack} className="flex items-center gap-1.5 text-green-700 text-sm font-bold btn-cute bg-green-50 px-3 py-1.5 rounded-full border border-green-200">
         <ArrowLeft size={14} /> Volver
       </button>
@@ -67,14 +66,14 @@ export default function FichaPlanta({ nombre, onBack }: Props) {
               faceStatus === 'thirsty' ? 'bg-yellow-200/50' :
               'bg-red-200/50'
             }`}>
-              <span className="text-5xl animate-float">{planta.emoji}</span>
+              <Icon emoji={planta.emoji} size={50} className="animate-float" />
             </div>
-            <div className={`absolute -bottom-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center text-sm border-2 border-white shadow-cute ${
+            <div className={`absolute -bottom-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center border-2 border-white shadow-cute ${
               faceStatus === 'happy' ? 'bg-green-300' :
               faceStatus === 'thirsty' ? 'bg-yellow-300' :
               'bg-red-300'
             }`}>
-              {faceStatus === 'happy' ? '😊' : faceStatus === 'thirsty' ? '😅' : '🥺'}
+              <Icon emoji={faceStatus === 'happy' ? '😊' : faceStatus === 'thirsty' ? '😅' : '🥺'} size={18} />
             </div>
           </div>
           
@@ -93,14 +92,13 @@ export default function FichaPlanta({ nombre, onBack }: Props) {
           </div>
         </div>
         
-        {/* Estado de riego */}
         <div className={`mt-4 p-3 rounded-2xl border ${
           faceStatus === 'happy' ? 'bg-green-50/80 border-green-200' :
           faceStatus === 'thirsty' ? 'bg-yellow-50/80 border-yellow-200' :
           'bg-red-50/80 border-red-200'
         }`}>
           <div className="flex items-center gap-2">
-            <Droplets size={14} className="text-blue-500" />
+            <WaterDrop size={14} />
             <span className="text-xs font-bold text-gray-700">
               {diasDesdeRiego !== null
                 ? `Último riego: hace ${diasDesdeRiego} día(s) | Frecuencia: cada ${planta.frecuencia_riego_dias}d`
@@ -122,7 +120,7 @@ export default function FichaPlanta({ nombre, onBack }: Props) {
                 : 'bg-white text-gray-600 border-gray-100 hover:border-green-200 shadow-sm'
             }`}
           >
-            <span>{tab.emoji}</span> {tab.label}
+            <Icon emoji={tab.emoji} size={14} /> {tab.label}
           </button>
         ))}
       </div>
@@ -133,40 +131,40 @@ export default function FichaPlanta({ nombre, onBack }: Props) {
           <div className="bg-white/80 backdrop-blur-sm rounded-3xl border-2 border-green-100 p-5 space-y-4 shadow-cute-lg">
             <div className="flex items-center gap-3 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-2xl p-3 border border-yellow-100">
               <div className="w-9 h-9 bg-gradient-to-br from-yellow-400 to-amber-400 rounded-xl flex items-center justify-center shadow-cute">
-                <Sun size={16} className="text-white" />
+                <Sun size={18} />
               </div>
               <div>
-                <p className="text-xs font-bold text-gray-700">☀️ Horario solar</p>
+                <p className="text-xs font-bold text-gray-700">Horario solar</p>
                 <p className="text-sm text-gray-600">{planta.horario_solar}</p>
               </div>
             </div>
             
             <div className="flex items-center gap-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-3 border border-green-100">
               <div className="w-9 h-9 bg-gradient-to-br from-green-400 to-emerald-400 rounded-xl flex items-center justify-center shadow-cute">
-                <Scissors size={16} className="text-white" />
+                <Scissors size={18} />
               </div>
               <div>
-                <p className="text-xs font-bold text-gray-700">✂️ Manejo recomendado</p>
+                <p className="text-xs font-bold text-gray-700">Manejo recomendado</p>
                 <p className="text-sm text-gray-600">{planta.ajuste_manejo}</p>
               </div>
             </div>
             
             <div className="flex items-center gap-3 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-3 border border-blue-100">
               <div className="w-9 h-9 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-xl flex items-center justify-center shadow-cute">
-                <Droplets size={16} className="text-white" />
+                <WaterDrop size={18} />
               </div>
               <div>
-                <p className="text-xs font-bold text-gray-700">🧪 Fertilizantes</p>
+                <p className="text-xs font-bold text-gray-700">Fertilizantes</p>
                 <p className="text-sm text-gray-600">{planta.fertilizantes_recomendados}</p>
               </div>
             </div>
             
             <div className="flex items-center gap-3 bg-gradient-to-r from-red-50 to-pink-50 rounded-2xl p-3 border border-red-100">
               <div className="w-9 h-9 bg-gradient-to-br from-red-400 to-pink-400 rounded-xl flex items-center justify-center shadow-cute">
-                <AlertTriangle size={16} className="text-white" />
+                <AlertIcon size={18} />
               </div>
               <div>
-                <p className="text-xs font-bold text-gray-700">⚠️ Prohibiciones</p>
+                <p className="text-xs font-bold text-gray-700">Prohibiciones</p>
                 <p className="text-sm text-red-600 font-medium">{planta.prohibiciones}</p>
               </div>
             </div>
@@ -177,15 +175,14 @@ export default function FichaPlanta({ nombre, onBack }: Props) {
           <div className="space-y-2">
             {riegos.length === 0 ? (
               <div className="text-center py-12 bg-white/80 rounded-3xl border-2 border-blue-100 shadow-cute">
-                <span className="text-5xl">💧</span>
+                <WaterDrop size={50} className="mx-auto text-blue-300" />
                 <p className="text-gray-400 mt-3 font-medium">Sin registros de riego</p>
-                <p className="text-xs text-gray-400 mt-1">¡Registra el primer riego!</p>
               </div>
             ) : (
               riegos.slice(0, 20).map((r, i) => (
                 <div key={i} className="bg-white/80 backdrop-blur-sm rounded-2xl border-2 border-blue-100 p-3 flex items-center gap-3 shadow-cute animate-fade-in" style={{ animationDelay: `${i * 0.05}s` }}>
                   <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl flex items-center justify-center">
-                    <span className="text-lg">💧</span>
+                    <WaterDrop size={20} />
                   </div>
                   <div className="flex-1">
                     <p className="text-sm font-bold text-gray-800">{r.tipo}</p>
@@ -204,15 +201,14 @@ export default function FichaPlanta({ nombre, onBack }: Props) {
           <div className="space-y-2">
             {bitacora.length === 0 ? (
               <div className="text-center py-12 bg-white/80 rounded-3xl border-2 border-green-100 shadow-cute">
-                <span className="text-5xl">📏</span>
+                <Icon emoji="📏" size={50} className="mx-auto" />
                 <p className="text-gray-400 mt-3 font-medium">Sin mediciones registradas</p>
-                <p className="text-xs text-gray-400 mt-1">¡Mide el crecimiento de tu planta!</p>
               </div>
             ) : (
               [...bitacora].reverse().map((b, i) => (
                 <div key={i} className="bg-white/80 backdrop-blur-sm rounded-2xl border-2 border-green-100 p-3 flex items-center gap-3 shadow-cute animate-fade-in" style={{ animationDelay: `${i * 0.05}s` }}>
                   <div className="w-10 h-10 bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl flex items-center justify-center">
-                    <span className="text-lg">📏</span>
+                    <Icon emoji="📏" size={20} />
                   </div>
                   <div className="flex-1">
                     <p className="text-sm font-bold text-gray-800">{b.altura_cm} cm</p>
@@ -221,7 +217,6 @@ export default function FichaPlanta({ nombre, onBack }: Props) {
                       <span className="text-xs bg-green-50 text-green-700 px-1.5 py-0.5 rounded-full font-medium">{b.num_plantas} planta(s)</span>
                     </div>
                   </div>
-                  {/* Mini bar de progreso visual */}
                   <div className="w-8 h-8 relative">
                     <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 bg-gradient-to-t from-green-400 to-emerald-300 rounded-t-full" 
                       style={{ height: `${Math.min(100, (b.altura_cm / 30) * 100)}%` }}></div>
@@ -236,7 +231,7 @@ export default function FichaPlanta({ nombre, onBack }: Props) {
           <div className="space-y-2">
             {salud.length === 0 ? (
               <div className="text-center py-12 bg-white/80 rounded-3xl border-2 border-orange-100 shadow-cute">
-                <span className="text-5xl">🌟</span>
+                <Icon emoji="🌟" size={50} className="mx-auto" />
                 <p className="text-gray-400 mt-3 font-medium">¡Sin incidencias!</p>
                 <p className="text-xs text-gray-400 mt-1">Tu planta está sana y feliz</p>
               </div>
@@ -249,7 +244,7 @@ export default function FichaPlanta({ nombre, onBack }: Props) {
                 }`} style={{ animationDelay: `${i * 0.05}s` }}>
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-lg">{s.estado === 'Resuelto' ? '✅' : '🔍'}</span>
+                      <Icon emoji={s.estado === 'Resuelto' ? '✅' : '🔍'} size={20} />
                       <p className="text-sm font-bold text-gray-800">{s.sintoma_riesgo}</p>
                     </div>
                     <span className={`text-[10px] px-2 py-0.5 rounded-full text-white font-bold ${
@@ -257,9 +252,9 @@ export default function FichaPlanta({ nombre, onBack }: Props) {
                     }`}>{s.estado}</span>
                   </div>
                   <div className="space-y-1 ml-7">
-                    <p className="text-xs text-gray-600">🤔 <span className="font-medium">Causa:</span> {s.causa_probable}</p>
-                    <p className="text-xs text-gray-600">💊 <span className="font-medium">Tratamiento:</span> {s.tratamiento_natural}</p>
-                    <p className="text-xs text-gray-400 mt-1">📅 Detectado: {s.fecha_deteccion}</p>
+                    <p className="text-xs text-gray-600"><Icon emoji="🤔" size={12} className="inline" /> <span className="font-medium">Causa:</span> {s.causa_probable}</p>
+                    <p className="text-xs text-gray-600"><Icon emoji="💊" size={12} className="inline" /> <span className="font-medium">Tratamiento:</span> {s.tratamiento_natural}</p>
+                    <p className="text-xs text-gray-400 mt-1"><Icon emoji="📅" size={12} className="inline" /> Detectado: {s.fecha_deteccion}</p>
                   </div>
                 </div>
               ))
@@ -271,7 +266,7 @@ export default function FichaPlanta({ nombre, onBack }: Props) {
           <div className="space-y-2">
             {cosechas.length === 0 ? (
               <div className="text-center py-12 bg-white/80 rounded-3xl border-2 border-purple-100 shadow-cute">
-                <span className="text-5xl">✂️</span>
+                <Scissors size={50} className="mx-auto text-purple-300" />
                 <p className="text-gray-400 mt-3 font-medium">Sin cosechas registradas</p>
                 <p className="text-xs text-gray-400 mt-1">¡Pronto recogerás tus primeros frutos!</p>
               </div>
@@ -279,7 +274,7 @@ export default function FichaPlanta({ nombre, onBack }: Props) {
               cosechas.map((c, i) => (
                 <div key={i} className="bg-white/80 backdrop-blur-sm rounded-2xl border-2 border-purple-100 p-3 flex items-center gap-3 shadow-cute animate-fade-in" style={{ animationDelay: `${i * 0.05}s` }}>
                   <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl flex items-center justify-center">
-                    <span className="text-lg">✂️</span>
+                    <Scissors size={20} />
                   </div>
                   <div className="flex-1">
                     <p className="text-sm font-bold text-gray-800">{c.parte_cosechada}</p>
@@ -288,7 +283,7 @@ export default function FichaPlanta({ nombre, onBack }: Props) {
                       <span className="text-xs bg-purple-50 text-purple-700 px-1.5 py-0.5 rounded-full font-medium">{c.cantidad_estimada} uds</span>
                     </div>
                   </div>
-                  <span className="text-lg">🎉</span>
+                  <Icon emoji="🎉" size={20} />
                 </div>
               ))
             )}

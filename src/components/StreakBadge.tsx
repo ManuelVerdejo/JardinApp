@@ -1,24 +1,23 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
-import { Flame, Sparkles } from 'lucide-react';
+import { Icon } from './Icon';
+import { Fire, Sparkles as SparklesIcon } from './Icons';
 
 export default function StreakBadge() {
   const riegos = useLiveQuery(() => db.riegos.toArray()) || [];
   
-  // Calcular racha de días consecutivos con al menos un riego
   const calcularRacha = () => {
     if (riegos.length === 0) return 0;
     
     const fechasUnicas = [...new Set(riegos.map(r => r.fecha))].sort().reverse();
     const hoy = new Date().toISOString().split('T')[0];
     
-    // Verificar si hoy o ayer tienen riego (para no romper la racha)
     const ayer = new Date();
     ayer.setDate(ayer.getDate() - 1);
     const ayerStr = ayer.toISOString().split('T')[0];
     
     if (fechasUnicas[0] !== hoy && fechasUnicas[0] !== ayerStr) {
-      return 0; // Racha rota
+      return 0;
     }
     
     let racha = 0;
@@ -52,10 +51,10 @@ export default function StreakBadge() {
       <div className="flex items-center gap-3">
         <div className="relative">
           <div className="w-11 h-11 bg-gradient-to-br from-orange-400 to-red-400 rounded-xl flex items-center justify-center shadow-cute animate-pulse-soft">
-            <span className="text-xl">🔥</span>
+            <Fire size={24} />
           </div>
           <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-300 rounded-full flex items-center justify-center border border-white">
-            <Sparkles size={8} className="text-orange-600" />
+            <SparklesIcon size={8} className="text-orange-600" />
           </div>
         </div>
         <div className="flex-1">
@@ -63,7 +62,7 @@ export default function StreakBadge() {
             <span className="text-lg font-black text-orange-800">{racha}</span>
             <span className="text-xs font-bold text-orange-600">día{racha !== 1 ? 's' : ''} seguidos</span>
           </div>
-          <p className="text-[10px] text-orange-500 font-medium">{getMessage(racha)} Cuidando tu huerto 💚</p>
+          <p className="text-[10px] text-orange-500 font-medium">{getMessage(racha)} Cuidando tu huerto</p>
         </div>
         <div className="flex gap-0.5">
           {Array.from({ length: Math.min(racha, 7) }).map((_, i) => (

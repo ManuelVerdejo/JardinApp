@@ -1,3 +1,5 @@
+import { Icon } from './Icon';
+
 // Componente que muestra la "cara" de la planta según su estado de riego
 export function PlantFace({ status, emoji }: { status: 'happy' | 'thirsty' | 'critical'; emoji: string }) {
   const faces = {
@@ -10,8 +12,10 @@ export function PlantFace({ status, emoji }: { status: 'happy' | 'thirsty' | 'cr
 
   return (
     <div className={`relative w-12 h-12 ${config.bg} rounded-full flex items-center justify-center ring-2 ${config.ring} ring-offset-2`}>
-      <span className="text-2xl">{emoji}</span>
-      <span className="absolute -bottom-1 -right-1 text-sm">{config.face}</span>
+      <Icon emoji={emoji} size={28} />
+      <div className="absolute -bottom-1 -right-1">
+        <Icon emoji={config.face} size={16} />
+      </div>
     </div>
   );
 }
@@ -23,15 +27,25 @@ export function MiniFace({ status }: { status: 'happy' | 'thirsty' | 'critical' 
     thirsty: '😅',
     critical: '🥺',
   };
-  return <span className="text-sm">{faces[status]}</span>;
+  return <Icon emoji={faces[status]} size={14} />;
 }
 
 // Mood indicator con mensaje
 export function MoodMessage({ status, nombre }: { status: 'happy' | 'thirsty' | 'critical'; nombre: string }) {
   const messages = {
-    happy: `${nombre} está feliz y contenta 🌟`,
-    thirsty: `${nombre} tiene sed... ¡regar pronto! 💦`,
-    critical: `${nombre} necesita agua YA! 🆘`,
+    happy: `${nombre} está feliz y contenta`,
+    thirsty: `${nombre} tiene sed... ¡regar pronto!`,
+    critical: `${nombre} necesita agua YA!`,
   };
-  return <p className="text-xs text-gray-500 italic">{messages[status]}</p>;
+  const icons = {
+    happy: '✨',
+    thirsty: '💦',
+    critical: '🆘',
+  };
+  return (
+    <p className="text-xs text-gray-500 italic flex items-center gap-1">
+      <Icon emoji={icons[status]} size={12} />
+      {messages[status]}
+    </p>
+  );
 }

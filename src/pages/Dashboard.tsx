@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import type { Planta } from '../db/database';
-import { PlantFace, MiniFace, MoodMessage } from '../components/PlantFace';
+import { PlantFace, MoodMessage } from '../components/PlantFace';
 import { useConfetti, ConfettiOverlay } from '../components/Confetti';
 import StreakBadge from '../components/StreakBadge';
-import { Droplets, AlertTriangle, Sparkles, Heart, ChevronRight, Sun, Clock } from 'lucide-react';
+import { Icon } from '../components/Icon';
+import { WaterDrop, Rainbow, Alert } from '../components/Icons';
+import { Clock } from 'lucide-react';
 
 interface Props {
   onOpenFicha: (nombre: string) => void;
@@ -97,13 +99,12 @@ export default function Dashboard({ onOpenFicha }: Props) {
   const thirstyCount = plantas.filter(p => getWaterStatus(p).status === 'thirsty').length;
   const criticalCount = plantas.filter(p => getWaterStatus(p).status === 'critical').length;
 
-  // Frase motivacional del día
   const frases = [
-    '¡Cada gota cuenta! 💧',
-    'Tu huerto te agradece 🌿',
-    '¡Hoy es un gran día para cultivar! ☀️',
-    'Las plantas son felices contigo 💚',
-    '¡Sigue así, jardinero/a! 🌟',
+    '¡Cada gota cuenta!',
+    'Tu huerto te agradece',
+    '¡Hoy es un gran día para cultivar!',
+    'Las plantas son felices contigo',
+    '¡Sigue así, jardinero/a!',
   ];
   const fraseDelDia = frases[new Date().getDay() % frases.length];
 
@@ -114,28 +115,25 @@ export default function Dashboard({ onOpenFicha }: Props) {
       {/* Frase del día */}
       <div className="glass rounded-2xl p-3 shadow-cute animate-fade-in">
         <div className="flex items-center gap-2">
-          <span className="text-lg animate-wiggle">🌈</span>
+          <Rainbow size={20} className="animate-wiggle" />
           <p className="text-xs font-bold text-green-700">{fraseDelDia}</p>
         </div>
       </div>
 
-      {/* Racha de días */}
-      <StreakBadge />
-
       {/* Stats cards */}
       <div className="grid grid-cols-3 gap-2.5">
         <div className="bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl p-3 text-center shadow-cute sticker animate-fade-in border-2 border-white">
-          <span className="text-2xl">😊</span>
+          <Icon emoji="😊" size={28} className="mx-auto" />
           <p className="text-2xl font-black text-green-700 mt-1">{happyCount}</p>
           <p className="text-[10px] text-green-600 font-bold">Felices</p>
         </div>
         <div className="bg-gradient-to-br from-yellow-100 to-amber-100 rounded-2xl p-3 text-center shadow-cute sticker animate-fade-in border-2 border-white" style={{ animationDelay: '0.1s' }}>
-          <span className="text-2xl">😅</span>
+          <Icon emoji="😅" size={28} className="mx-auto" />
           <p className="text-2xl font-black text-yellow-700 mt-1">{thirstyCount}</p>
           <p className="text-[10px] text-yellow-600 font-bold">Con sed</p>
         </div>
         <div className="bg-gradient-to-br from-red-100 to-pink-100 rounded-2xl p-3 text-center shadow-cute sticker animate-fade-in border-2 border-white" style={{ animationDelay: '0.2s' }}>
-          <span className="text-2xl">🥺</span>
+          <Icon emoji="🥺" size={28} className="mx-auto" />
           <p className="text-2xl font-black text-red-700 mt-1">{criticalCount}</p>
           <p className="text-[10px] text-red-600 font-bold">Urgente</p>
         </div>
@@ -146,7 +144,7 @@ export default function Dashboard({ onOpenFicha }: Props) {
         <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-2xl p-4 shadow-cute animate-fade-in">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-7 h-7 bg-amber-200 rounded-full flex items-center justify-center">
-              <AlertTriangle size={14} className="text-amber-700" />
+              <Alert size={14} />
             </div>
             <span className="text-sm font-black text-amber-800">Alertas de Salud</span>
             <span className="ml-auto bg-amber-200 text-amber-800 text-xs font-bold px-2 py-0.5 rounded-full">{alertasSalud.length}</span>
@@ -154,7 +152,7 @@ export default function Dashboard({ onOpenFicha }: Props) {
           <div className="space-y-1.5">
             {alertasSalud.slice(0, 3).map((s, i) => (
               <div key={i} className="flex items-center gap-2 bg-white/60 rounded-xl px-3 py-1.5">
-                <span className="text-sm">{plantas.find(p => p.nombre === s.planta_nombre)?.emoji || '🌱'}</span>
+                <Icon emoji={plantas.find(p => p.nombre === s.planta_nombre)?.emoji || '🌱'} size={16} />
                 <span className="text-xs font-bold text-amber-800">{s.planta_nombre}</span>
                 <span className="text-xs text-amber-600 truncate">{s.sintoma_riesgo}</span>
               </div>
@@ -167,7 +165,7 @@ export default function Dashboard({ onOpenFicha }: Props) {
       <div>
         <div className="flex items-center gap-2 mb-3">
           <div className="w-7 h-7 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full flex items-center justify-center shadow-cute">
-            <Droplets size={14} className="text-white" />
+            <WaterDrop size={14} />
           </div>
           <h2 className="text-sm font-black text-gray-800 uppercase tracking-wide">Semáforo de Riego</h2>
         </div>
@@ -191,7 +189,9 @@ export default function Dashboard({ onOpenFicha }: Props) {
                   <div className="relative">
                     <PlantFace status={status.face} emoji={planta.emoji} />
                     {isWatered && (
-                      <div className="absolute -top-2 -right-2 text-lg animate-heart">💧</div>
+                      <div className="absolute -top-2 -right-2 animate-heart">
+                        <WaterDrop size={18} />
+                      </div>
                     )}
                   </div>
                   
@@ -199,8 +199,10 @@ export default function Dashboard({ onOpenFicha }: Props) {
                   <div className="flex-1 min-w-0" onClick={() => onOpenFicha(planta.nombre)}>
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className={`font-black text-sm ${style.text}`}>{planta.nombre}</h3>
-                      <span className={`text-[10px] px-2 py-0.5 rounded-full text-white font-bold ${style.badge} shadow-sm`}>
-                        {status.status === 'happy' ? '✨ Al día' : status.status === 'thirsty' ? '💦 Regar hoy' : '🆘 ¡Sedienta!'}
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full text-white font-bold ${style.badge} shadow-sm flex items-center gap-1`}>
+                        {status.status === 'happy' ? <><Icon emoji="✨" size={10} /> Al día</> : 
+                         status.status === 'thirsty' ? <><Icon emoji="💦" size={10} /> Regar hoy</> : 
+                         <><Icon emoji="🆘" size={10} /> ¡Sedienta!</>}
                       </span>
                     </div>
                     <MoodMessage status={status.status} nombre={planta.nombre} />
@@ -212,7 +214,7 @@ export default function Dashboard({ onOpenFicha }: Props) {
                         </span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Droplets size={10} className="text-blue-400" />
+                        <WaterDrop size={10} />
                         <span className="text-[10px] text-gray-500 font-medium">Cada {planta.frecuencia_riego_dias}d</span>
                       </div>
                     </div>
@@ -226,7 +228,7 @@ export default function Dashboard({ onOpenFicha }: Props) {
                     }}
                     className={`px-3 py-2 rounded-xl text-xs font-bold text-white transition-all btn-cute shadow-lg ${style.btn} flex items-center gap-1`}
                   >
-                    <span>💧</span>
+                    <WaterDrop size={14} />
                     <span className="hidden sm:inline">Regar</span>
                   </button>
                 </div>
@@ -235,6 +237,9 @@ export default function Dashboard({ onOpenFicha }: Props) {
           })}
         </div>
       </div>
+
+      {/* Racha */}
+      <StreakBadge />
 
       {/* Footer cute */}
       <div className="text-center pt-4 pb-2">
