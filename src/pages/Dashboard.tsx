@@ -11,11 +11,11 @@ import { Timeline } from '../components/Timeline';
 import { PlantComparator } from '../components/Comparator';
 import { Predictions } from '../components/Predictions';
 import { Infographic } from '../components/Infographic';
-import { Tooltip } from '../components/Tooltip';
+import { Tooltip, FeatureTooltip } from '../components/Tooltip';
 import { Icon } from '../components/Icon';
 import { WaterDrop, Rainbow, Alert } from '../components/Icons';
 import { useTheme } from '../context/ThemeContext';
-import { Clock } from 'lucide-react';
+import { Clock, Info } from 'lucide-react';
 
 interface Props {
   onOpenFicha: (nombre: string) => void;
@@ -29,6 +29,13 @@ export default function Dashboard({ onOpenFicha }: Props) {
   const { pieces, trigger: triggerConfetti } = useConfetti();
   const [justWatered, setJustWatered] = useState<string | null>(null);
   const { isDark } = useTheme();
+  const [showTooltips, setShowTooltips] = useState(true);
+  
+  // Ocultar tooltips después de 10 segundos
+  useEffect(() => {
+    const timer = setTimeout(() => setShowTooltips(false), 10000);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => setRefreshKey(k => k + 1), 60000);
@@ -133,21 +140,27 @@ export default function Dashboard({ onOpenFicha }: Props) {
 
       {/* Stats cards */}
       <div className="grid grid-cols-3 gap-2.5">
-        <div className="bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl p-3 text-center shadow-cute sticker animate-fade-in border-2 border-white">
-          <Icon emoji="😊" size={28} className="mx-auto" />
-          <p className="text-2xl font-black text-green-700 mt-1">{happyCount}</p>
-          <p className="text-[10px] text-green-600 font-bold">Felices</p>
-        </div>
-        <div className="bg-gradient-to-br from-yellow-100 to-amber-100 rounded-2xl p-3 text-center shadow-cute sticker animate-fade-in border-2 border-white" style={{ animationDelay: '0.1s' }}>
-          <Icon emoji="😅" size={28} className="mx-auto" />
-          <p className="text-2xl font-black text-yellow-700 mt-1">{thirstyCount}</p>
-          <p className="text-[10px] text-yellow-600 font-bold">Con sed</p>
-        </div>
-        <div className="bg-gradient-to-br from-red-100 to-pink-100 rounded-2xl p-3 text-center shadow-cute sticker animate-fade-in border-2 border-white" style={{ animationDelay: '0.2s' }}>
-          <Icon emoji="🥺" size={28} className="mx-auto" />
-          <p className="text-2xl font-black text-red-700 mt-1">{criticalCount}</p>
-          <p className="text-[10px] text-red-600 font-bold">Urgente</p>
-        </div>
+        <Tooltip content="Plantas que están al día con su riego" position="bottom">
+          <div className="bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl p-3 text-center shadow-cute sticker animate-fade-in border-2 border-white">
+            <Icon emoji="😊" size={28} className="mx-auto" />
+            <p className="text-2xl font-black text-green-700 mt-1">{happyCount}</p>
+            <p className="text-[10px] text-green-600 font-bold">Felices</p>
+          </div>
+        </Tooltip>
+        <Tooltip content="Plantas que necesitan riego hoy" position="bottom">
+          <div className="bg-gradient-to-br from-yellow-100 to-amber-100 rounded-2xl p-3 text-center shadow-cute sticker animate-fade-in border-2 border-white" style={{ animationDelay: '0.1s' }}>
+            <Icon emoji="😅" size={28} className="mx-auto" />
+            <p className="text-2xl font-black text-yellow-700 mt-1">{thirstyCount}</p>
+            <p className="text-[10px] text-yellow-600 font-bold">Con sed</p>
+          </div>
+        </Tooltip>
+        <Tooltip content="Plantas que necesitan riego urgente" position="bottom">
+          <div className="bg-gradient-to-br from-red-100 to-pink-100 rounded-2xl p-3 text-center shadow-cute sticker animate-fade-in border-2 border-white" style={{ animationDelay: '0.2s' }}>
+            <Icon emoji="🥺" size={28} className="mx-auto" />
+            <p className="text-2xl font-black text-red-700 mt-1">{criticalCount}</p>
+            <p className="text-[10px] text-red-600 font-bold">Urgente</p>
+          </div>
+        </Tooltip>
       </div>
 
       {/* Alertas de salud */}
@@ -174,12 +187,15 @@ export default function Dashboard({ onOpenFicha }: Props) {
 
       {/* Semáforo de riego */}
       <div>
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-7 h-7 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full flex items-center justify-center shadow-cute">
-            <WaterDrop size={14} />
+        <Tooltip content="Toca una planta para ver su ficha o el botón 💧 para regar rápidamente" position="top">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-7 h-7 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full flex items-center justify-center shadow-cute">
+              <WaterDrop size={14} />
+            </div>
+            <h2 className="text-sm font-black text-gray-800 uppercase tracking-wide">Semáforo de Riego</h2>
+            <Info size={14} className="text-gray-400 ml-auto" />
           </div>
-          <h2 className="text-sm font-black text-gray-800 uppercase tracking-wide">Semáforo de Riego</h2>
-        </div>
+        </Tooltip>
         
         <div className="space-y-2.5 sm:space-y-3">
           {sortedPlantas.map((planta, index) => {
@@ -263,20 +279,39 @@ export default function Dashboard({ onOpenFicha }: Props) {
       </Tooltip>
 
       {/* Mapa de calor */}
-      <Tooltip content="Visualización de tu actividad de riego en los últimos 90 días" position="top">
-        <div className="relative">
-          <HeatMap />
-        </div>
-      </Tooltip>
+      <div className="relative">
+        {showTooltips && (
+          <FeatureTooltip
+            content="¡Nuevo! Mapa de calor que muestra tu actividad de riego en los últimos 90 días"
+            isVisible={showTooltips}
+            onClose={() => setShowTooltips(false)}
+            icon="🔥"
+            position="top"
+          />
+        )}
+        <HeatMap />
+      </div>
 
       {/* Línea de tiempo */}
-      <Timeline />
+      <div className="relative">
+        <Tooltip content="Historial cronológico de todas las actividades de tu huerto" position="top">
+          <Timeline />
+        </Tooltip>
+      </div>
 
       {/* Comparador de plantas */}
-      <PlantComparator />
+      <div className="relative">
+        <Tooltip content="Compara el crecimiento de dos plantas lado a lado" position="top">
+          <PlantComparator />
+        </Tooltip>
+      </div>
 
       {/* Predicciones */}
-      <Predictions />
+      <div className="relative">
+        <Tooltip content="Predicciones basadas en el historial de crecimiento de tus plantas" position="top">
+          <Predictions />
+        </Tooltip>
+      </div>
 
       {/* Footer cute */}
       <div className="text-center pt-4 pb-2">

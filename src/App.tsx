@@ -10,6 +10,7 @@ import { Achievements } from './components/Achievements';
 import { VirtualGarden } from './components/VirtualGarden';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { ThemeToggle } from './components/ThemeToggle';
+import { LoadingAnimation } from './components/LoadingAnimation';
 import { Icon } from './components/Icon';
 import { Seedling, Sparkles as SparklesIcon, Package, Chart, Download, Refresh } from './components/Icons';
 import { Home, Plus, BarChart3, Save, Calendar as CalendarIcon, Trophy, Flower2 } from 'lucide-react';
@@ -51,28 +52,7 @@ function AppContent() {
   };
 
   if (!isInitialized || showWelcome) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-green-100 via-emerald-50 to-yellow-50 flex items-center justify-center bg-pattern">
-        <div className="text-center animate-bounce-in">
-          <div className="relative inline-block">
-            <Seedling size={80} className="animate-float" />
-            <div className="absolute -top-2 -right-2 animate-sparkle">
-              <SparklesIcon size={24} className="text-yellow-400" />
-            </div>
-            <div className="absolute -bottom-1 -left-3 animate-sparkle" style={{ animationDelay: '0.5s' }}>
-              <Icon emoji="💧" size={20} />
-            </div>
-          </div>
-          <h1 className="mt-6 text-3xl font-black text-green-800">Mi Huerto</h1>
-          <p className="mt-2 text-sm text-green-600 font-medium">Preparando tu jardín mágico...</p>
-          <div className="mt-4 flex justify-center gap-1">
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingAnimation type="growing" message="Preparando tu jardín mágico..." />;
   }
 
   return (
