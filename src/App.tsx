@@ -9,9 +9,10 @@ import Calendar from './components/Calendar';
 import { Achievements } from './components/Achievements';
 import { VirtualGarden } from './components/VirtualGarden';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { ThemeToggle } from './components/ThemeToggle';
 import { Icon } from './components/Icon';
 import { Seedling, Sparkles as SparklesIcon, Package, Chart, Download, Refresh } from './components/Icons';
-import { Home, Plus, BarChart3, Save, Calendar as CalendarIcon, Trophy, Flower2, Moon, Sun } from 'lucide-react';
+import { Home, Plus, BarChart3, Save, Calendar as CalendarIcon, Trophy, Flower2 } from 'lucide-react';
 
 type TabType = 'dashboard' | 'registro' | 'analisis' | 'ficha' | 'calendar' | 'achievements' | 'garden' | 'settings';
 
@@ -20,7 +21,7 @@ function AppContent() {
   const [selectedPlanta, setSelectedPlanta] = useState<string>('');
   const [isInitialized, setIsInitialized] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
-  const { isDark, toggleTheme } = useTheme();
+  const { isDark } = useTheme();
 
   useEffect(() => {
     const initDB = async () => {
@@ -97,14 +98,7 @@ function AppContent() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button
-              onClick={toggleTheme}
-              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all btn-cute ${
-                isDark ? 'bg-gray-700 text-yellow-400' : 'bg-white/60 text-gray-600'
-              } shadow-cute`}
-            >
-              {isDark ? <Sun size={16} /> : <Moon size={16} />}
-            </button>
+            <ThemeToggle />
             <div className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full flex items-center gap-1 sm:gap-1.5 shadow-cute ${
               isDark ? 'bg-gray-700' : 'glass'
             }`}>
