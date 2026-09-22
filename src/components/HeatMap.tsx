@@ -1,8 +1,10 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { Icon } from './Icon';
+import { useTheme } from '../context/ThemeContext';
 
 export function HeatMap() {
+  const { isDark } = useTheme();
   const riegos = useLiveQuery(() => db.riegos.toArray()) || [];
 
   // Generar últimos 90 días
@@ -22,11 +24,19 @@ export function HeatMap() {
   }
 
   const getColor = (count: number) => {
-    if (count === 0) return 'bg-gray-100 dark:bg-gray-700';
-    if (count === 1) return 'bg-green-200 dark:bg-green-800';
-    if (count === 2) return 'bg-green-300 dark:bg-green-700';
-    if (count === 3) return 'bg-green-400 dark:bg-green-600';
-    return 'bg-green-500 dark:bg-green-500';
+    if (isDark) {
+      if (count === 0) return 'bg-gray-700';
+      if (count === 1) return 'bg-green-800';
+      if (count === 2) return 'bg-green-700';
+      if (count === 3) return 'bg-green-600';
+      return 'bg-green-500';
+    } else {
+      if (count === 0) return 'bg-gray-100';
+      if (count === 1) return 'bg-green-200';
+      if (count === 2) return 'bg-green-300';
+      if (count === 3) return 'bg-green-400';
+      return 'bg-green-500';
+    }
   };
 
   const totalRiegos = days.reduce((acc, d) => acc + d.count, 0);
@@ -34,28 +44,30 @@ export function HeatMap() {
   const promedio = diasConRiego > 0 ? (totalRiegos / diasConRiego).toFixed(1) : '0';
 
   return (
-    <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border-2 border-green-100 dark:border-green-900 p-3 sm:p-4 shadow-cute-lg animate-fade-in">
+    <div className={`rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-cute-lg animate-fade-in border-2 ${
+      isDark ? 'bg-gray-800/80 border-green-900' : 'bg-white/80 backdrop-blur-sm border-green-100'
+    }`}>
       <div className="flex items-center gap-2 mb-3">
         <div className="w-7 h-7 bg-gradient-to-br from-green-400 to-emerald-400 rounded-xl flex items-center justify-center shadow-cute">
           <Icon emoji="🔥" size={14} />
         </div>
-        <h3 className="font-black text-gray-800 dark:text-gray-200 text-xs sm:text-sm">Mapa de Riego</h3>
-        <span className="ml-auto text-[9px] text-gray-500 dark:text-gray-400">Últimos 90 días</span>
+        <h3 className={`font-black text-xs sm:text-sm ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Mapa de Riego</h3>
+        <span className={`ml-auto text-[9px] ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Últimos 90 días</span>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-2 mb-3">
-        <div className="bg-green-50 dark:bg-green-900/30 rounded-xl p-2 text-center">
-          <p className="text-sm sm:text-base font-black text-green-700 dark:text-green-400">{totalRiegos}</p>
-          <p className="text-[9px] sm:text-[10px] text-green-600 dark:text-green-500 font-medium">Total</p>
+        <div className={`rounded-xl p-2 text-center ${isDark ? 'bg-green-900/30' : 'bg-green-50'}`}>
+          <p className={`text-sm sm:text-base font-black ${isDark ? 'text-green-400' : 'text-green-700'}`}>{totalRiegos}</p>
+          <p className={`text-[9px] sm:text-[10px] font-medium ${isDark ? 'text-green-500' : 'text-green-600'}`}>Total</p>
         </div>
-        <div className="bg-green-50 dark:bg-green-900/30 rounded-xl p-2 text-center">
-          <p className="text-sm sm:text-base font-black text-green-700 dark:text-green-400">{diasConRiego}</p>
-          <p className="text-[9px] sm:text-[10px] text-green-600 dark:text-green-500 font-medium">Días activos</p>
+        <div className={`rounded-xl p-2 text-center ${isDark ? 'bg-green-900/30' : 'bg-green-50'}`}>
+          <p className={`text-sm sm:text-base font-black ${isDark ? 'text-green-400' : 'text-green-700'}`}>{diasConRiego}</p>
+          <p className={`text-[9px] sm:text-[10px] font-medium ${isDark ? 'text-green-500' : 'text-green-600'}`}>Días activos</p>
         </div>
-        <div className="bg-green-50 dark:bg-green-900/30 rounded-xl p-2 text-center">
-          <p className="text-sm sm:text-base font-black text-green-700 dark:text-green-400">{promedio}</p>
-          <p className="text-[9px] sm:text-[10px] text-green-600 dark:text-green-500 font-medium">Promedio/día</p>
+        <div className={`rounded-xl p-2 text-center ${isDark ? 'bg-green-900/30' : 'bg-green-50'}`}>
+          <p className={`text-sm sm:text-base font-black ${isDark ? 'text-green-400' : 'text-green-700'}`}>{promedio}</p>
+          <p className={`text-[9px] sm:text-[10px] font-medium ${isDark ? 'text-green-500' : 'text-green-600'}`}>Promedio/día</p>
         </div>
       </div>
 
@@ -78,13 +90,13 @@ export function HeatMap() {
 
       {/* Legend */}
       <div className="flex items-center justify-end gap-1 mt-2">
-        <span className="text-[9px] text-gray-500 dark:text-gray-400">Menos</span>
-        <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm bg-gray-100 dark:bg-gray-700"></div>
-        <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm bg-green-200 dark:bg-green-800"></div>
-        <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm bg-green-300 dark:bg-green-700"></div>
-        <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm bg-green-400 dark:bg-green-600"></div>
-        <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm bg-green-500 dark:bg-green-500"></div>
-        <span className="text-[9px] text-gray-500 dark:text-gray-400">Más</span>
+        <span className={`text-[9px] ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Menos</span>
+        <div className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm ${isDark ? 'bg-gray-700' : 'bg-gray-100'}`}></div>
+        <div className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm ${isDark ? 'bg-green-800' : 'bg-green-200'}`}></div>
+        <div className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm ${isDark ? 'bg-green-700' : 'bg-green-300'}`}></div>
+        <div className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm ${isDark ? 'bg-green-600' : 'bg-green-400'}`}></div>
+        <div className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm ${isDark ? 'bg-green-500' : 'bg-green-500'}`}></div>
+        <span className={`text-[9px] ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Más</span>
       </div>
     </div>
   );

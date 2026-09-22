@@ -1,8 +1,10 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { Icon } from './Icon';
+import { useTheme } from '../context/ThemeContext';
 
 export function Predictions() {
+  const { isDark } = useTheme();
   const plantas = useLiveQuery(() => db.plantas.toArray()) || [];
   const bitacora = useLiveQuery(() => db.bitacora.toArray()) || [];
   const cosechas = useLiveQuery(() => db.cosechas.toArray()) || [];
@@ -54,34 +56,38 @@ export function Predictions() {
   }).filter(p => p.growthRate !== null);
 
   return (
-    <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border-2 border-amber-100 dark:border-amber-900 p-3 sm:p-4 shadow-cute-lg animate-fade-in">
+    <div className={`rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-cute-lg animate-fade-in border-2 ${
+      isDark ? 'bg-gray-800/80 border-amber-900' : 'bg-white/80 backdrop-blur-sm border-amber-100'
+    }`}>
       <div className="flex items-center gap-2 mb-3">
         <div className="w-7 h-7 bg-gradient-to-br from-amber-400 to-orange-400 rounded-xl flex items-center justify-center shadow-cute">
           <Icon emoji="🔮" size={14} />
         </div>
-        <h3 className="font-black text-gray-800 dark:text-gray-200 text-xs sm:text-sm">Predicciones</h3>
+        <h3 className={`font-black text-xs sm:text-sm ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Predicciones</h3>
       </div>
 
       {predictions.length === 0 ? (
-        <p className="text-xs text-gray-500 dark:text-gray-400 text-center py-6">
+        <p className={`text-xs text-center py-6 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
           Necesitas más datos para generar predicciones
         </p>
       ) : (
         <div className="space-y-2">
           {predictions.slice(0, 5).map((pred, i) => (
-            <div key={i} className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl p-2.5 border border-amber-200 dark:border-amber-800">
+            <div key={i} className={`rounded-xl p-2.5 border ${
+              isDark ? 'bg-gradient-to-r from-amber-900/20 to-orange-900/20 border-amber-800' : 'bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200'
+            }`}>
               <div className="flex items-center gap-2 mb-1.5">
                 <Icon emoji={pred.planta.emoji} size={20} />
-                <span className="text-xs font-bold text-amber-900 dark:text-amber-300">{pred.planta.nombre}</span>
+                <span className={`text-xs font-bold ${isDark ? 'text-amber-300' : 'text-amber-900'}`}>{pred.planta.nombre}</span>
               </div>
               
               <div className="grid grid-cols-2 gap-2">
                 {pred.nextHeight && (
                   <div>
-                    <p className="text-[9px] text-gray-600 dark:text-gray-400 mb-0.5">Altura en 7 días:</p>
-                    <p className="text-xs font-bold text-amber-800 dark:text-amber-400">
+                    <p className={`text-[9px] mb-0.5 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Altura en 7 días:</p>
+                    <p className={`text-xs font-bold ${isDark ? 'text-amber-400' : 'text-amber-800'}`}>
                       {pred.nextHeight} cm
-                      <span className="text-[9px] font-normal text-gray-500 dark:text-gray-400 ml-1">
+                      <span className={`text-[9px] font-normal ml-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                         ({pred.growthRate! > 0 ? '+' : ''}{pred.growthRate} cm/día)
                       </span>
                     </p>
@@ -90,8 +96,8 @@ export function Predictions() {
                 
                 {pred.nextHarvest && (
                   <div>
-                    <p className="text-[9px] text-gray-600 dark:text-gray-400 mb-0.5">Próxima cosecha:</p>
-                    <p className="text-xs font-bold text-amber-800 dark:text-amber-400">
+                    <p className={`text-[9px] mb-0.5 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Próxima cosecha:</p>
+                    <p className={`text-xs font-bold ${isDark ? 'text-amber-400' : 'text-amber-800'}`}>
                       {pred.nextHarvest.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
                     </p>
                   </div>

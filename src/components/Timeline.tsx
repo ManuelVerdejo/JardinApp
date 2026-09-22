@@ -1,6 +1,7 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { Icon } from './Icon';
+import { useTheme } from '../context/ThemeContext';
 
 interface TimelineEvent {
   date: string;
@@ -12,6 +13,7 @@ interface TimelineEvent {
 }
 
 export function Timeline({ plantaNombre }: { plantaNombre?: string }) {
+  const { isDark } = useTheme();
   const riegos = useLiveQuery(() => 
     plantaNombre 
       ? db.riegos.where('planta_nombre').equals(plantaNombre).toArray()
@@ -73,32 +75,34 @@ export function Timeline({ plantaNombre }: { plantaNombre?: string }) {
   ].sort((a, b) => b.date.localeCompare(a.date));
 
   const colorClasses = {
-    blue: 'bg-blue-100 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800',
-    purple: 'bg-purple-100 dark:bg-purple-900/30 border-purple-200 dark:border-purple-800',
-    green: 'bg-green-100 dark:bg-green-900/30 border-green-200 dark:border-green-800',
-    orange: 'bg-orange-100 dark:bg-orange-900/30 border-orange-200 dark:border-orange-800',
+    blue: isDark ? 'bg-blue-900/30 border-blue-800' : 'bg-blue-100 border-blue-200',
+    purple: isDark ? 'bg-purple-900/30 border-purple-800' : 'bg-purple-100 border-purple-200',
+    green: isDark ? 'bg-green-900/30 border-green-800' : 'bg-green-100 border-green-200',
+    orange: isDark ? 'bg-orange-900/30 border-orange-800' : 'bg-orange-100 border-orange-200',
   };
 
   const lineColors = {
-    blue: 'bg-blue-300 dark:bg-blue-600',
-    purple: 'bg-purple-300 dark:bg-purple-600',
-    green: 'bg-green-300 dark:bg-green-600',
-    orange: 'bg-orange-300 dark:bg-orange-600',
+    blue: isDark ? 'bg-blue-600' : 'bg-blue-300',
+    purple: isDark ? 'bg-purple-600' : 'bg-purple-300',
+    green: isDark ? 'bg-green-600' : 'bg-green-300',
+    orange: isDark ? 'bg-orange-600' : 'bg-orange-300',
   };
 
   return (
-    <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border-2 border-indigo-100 dark:border-indigo-900 p-3 sm:p-4 shadow-cute-lg animate-fade-in">
+    <div className={`rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-cute-lg animate-fade-in border-2 ${
+      isDark ? 'bg-gray-800/80 border-indigo-900' : 'bg-white/80 backdrop-blur-sm border-indigo-100'
+    }`}>
       <div className="flex items-center gap-2 mb-3">
         <div className="w-7 h-7 bg-gradient-to-br from-indigo-400 to-purple-400 rounded-xl flex items-center justify-center shadow-cute">
           <Icon emoji="📜" size={14} />
         </div>
-        <h3 className="font-black text-gray-800 dark:text-gray-200 text-xs sm:text-sm">
+        <h3 className={`font-black text-xs sm:text-sm ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>
           {plantaNombre ? 'Historial' : 'Línea de Tiempo'}
         </h3>
       </div>
 
       {events.length === 0 ? (
-        <p className="text-xs text-gray-500 dark:text-gray-400 text-center py-6">Sin eventos registrados</p>
+        <p className={`text-xs text-center py-6 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Sin eventos registrados</p>
       ) : (
         <div className="relative max-h-80 overflow-y-auto">
           {events.slice(0, 20).map((event, i) => (
@@ -116,11 +120,11 @@ export function Timeline({ plantaNombre }: { plantaNombre?: string }) {
               {/* Content */}
               <div className="flex-1 pb-2">
                 <div className="flex items-center justify-between mb-0.5">
-                  <p className="text-xs font-bold text-gray-800 dark:text-gray-200 truncate">
+                  <p className={`text-xs font-bold truncate ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>
                     {plantaNombre ? event.description : `${event.planta} · ${event.description}`}
                   </p>
                 </div>
-                <p className="text-[10px] text-gray-500 dark:text-gray-400">
+                <p className={`text-[10px] ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                   {new Date(event.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </p>
               </div>
