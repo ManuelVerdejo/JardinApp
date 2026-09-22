@@ -5,17 +5,22 @@ import Dashboard from './pages/Dashboard';
 import Registro from './pages/Registro';
 import Analisis from './pages/Analisis';
 import FichaPlanta from './pages/FichaPlanta';
+import { default as Calendar } from './components/Calendar';
+import { Achievements } from './components/Achievements';
+import { VirtualGarden } from './components/VirtualGarden';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { Icon } from './components/Icon';
 import { Seedling, Sparkles as SparklesIcon, Package, Chart, Download, Refresh } from './components/Icons';
-import { Home, Plus, BarChart3, Save } from 'lucide-react';
+import { Home, Plus, BarChart3, Save, Calendar as CalendarIcon, Trophy, Flower2, Moon, Sun } from 'lucide-react';
 
-type TabType = 'dashboard' | 'registro' | 'analisis' | 'ficha' | 'settings';
+type TabType = 'dashboard' | 'registro' | 'analisis' | 'ficha' | 'calendar' | 'achievements' | 'garden' | 'settings';
 
-export default function App() {
+function AppContent() {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
   const [selectedPlanta, setSelectedPlanta] = useState<string>('');
   const [isInitialized, setIsInitialized] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
+  const { isDark, toggleTheme } = useTheme();
 
   useEffect(() => {
     const initDB = async () => {
@@ -70,9 +75,15 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50/50 to-yellow-50/30 pb-24 max-w-lg mx-auto bg-pattern">
-      {/* Header cute */}
-      <header className="sticky top-0 z-40 glass-strong px-3 sm:px-4 py-2.5 sm:py-3 border-b border-white/50">
+    <div className={`min-h-screen pb-24 max-w-lg mx-auto transition-colors duration-300 ${
+      isDark 
+        ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' 
+        : 'bg-gradient-to-br from-green-50 via-emerald-50/50 to-yellow-50/30 bg-pattern'
+    }`}>
+      {/* Header */}
+      <header className={`sticky top-0 z-40 px-3 sm:px-4 py-2.5 sm:py-3 border-b ${
+        isDark ? 'bg-gray-900/90 border-gray-700' : 'glass-strong border-white/50'
+      } backdrop-blur-md`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-2.5">
             <div className="relative">
@@ -81,84 +92,102 @@ export default function App() {
               <div className="absolute -top-1 -right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-pink-400 rounded-full animate-pulse-soft"></div>
             </div>
             <div>
-              <h1 className="text-base sm:text-lg font-black text-green-900 leading-tight">Mi Huerto</h1>
-              <p className="text-[9px] sm:text-[10px] text-green-600 font-medium -mt-0.5">Tu jardín feliz</p>
+              <h1 className={`text-base sm:text-lg font-black leading-tight ${isDark ? 'text-gray-100' : 'text-green-900'}`}>Mi Huerto</h1>
+              <p className={`text-[9px] sm:text-[10px] font-medium -mt-0.5 ${isDark ? 'text-gray-400' : 'text-green-600'}`}>Tu jardín feliz</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className="glass px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full flex items-center gap-1 sm:gap-1.5 shadow-cute">
+            <button
+              onClick={toggleTheme}
+              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all btn-cute ${
+                isDark ? 'bg-gray-700 text-yellow-400' : 'bg-white/60 text-gray-600'
+              } shadow-cute`}
+            >
+              {isDark ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
+            <div className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full flex items-center gap-1 sm:gap-1.5 shadow-cute ${
+              isDark ? 'bg-gray-700' : 'glass'
+            }`}>
               <SparklesIcon size={10} className="text-yellow-500 sm:hidden" />
               <SparklesIcon size={12} className="text-yellow-500 hidden sm:block" />
-              <span className="text-[9px] sm:text-[10px] font-bold text-green-700">Offline</span>
+              <span className={`text-[9px] sm:text-[10px] font-bold ${isDark ? 'text-gray-300' : 'text-green-700'}`}>Offline</span>
             </div>
           </div>
         </div>
       </header>
 
       {/* Content */}
-      <main className="px-3 sm:px-4 py-3 sm:py-4 pb-24 animate-fade-in">
+      <main className={`px-3 sm:px-4 py-3 sm:py-4 pb-24 animate-fade-in ${isDark ? 'text-gray-200' : ''}`}>
         {activeTab === 'dashboard' && <Dashboard onOpenFicha={openFicha} />}
         {activeTab === 'registro' && <Registro />}
         {activeTab === 'analisis' && <Analisis />}
         {activeTab === 'ficha' && <FichaPlanta nombre={selectedPlanta} onBack={() => setActiveTab('dashboard')} />}
+        {activeTab === 'calendar' && <Calendar />}
+        {activeTab === 'achievements' && <Achievements />}
+        {activeTab === 'garden' && <VirtualGarden />}
       </main>
 
-      {/* Bottom Navigation cute */}
+      {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 safe-bottom">
         <div className="max-w-lg mx-auto px-2 sm:px-3 pb-1 sm:pb-2">
-          <div className="glass-strong rounded-2xl shadow-cute-lg border border-white/60 px-1 sm:px-2 py-1.5 sm:py-2 flex justify-around items-center">
-            <NavButton label="Inicio" iconKey="home" active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} color="green" />
-            <NavButton label="Registro" iconKey="pencil" active={activeTab === 'registro'} onClick={() => setActiveTab('registro')} color="pink" />
-            <NavButton label="Análisis" iconKey="chart" active={activeTab === 'analisis'} onClick={() => setActiveTab('analisis')} color="purple" />
-            <NavButton label="Datos" iconKey="save" active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} color="blue" />
+          <div className={`rounded-2xl shadow-cute-lg border px-1 sm:px-2 py-1.5 sm:py-2 flex justify-around items-center ${
+            isDark ? 'bg-gray-800/95 border-gray-700' : 'glass-strong border-white/60'
+          } backdrop-blur-md`}>
+            <NavButton label="Inicio" iconKey="home" active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} color="green" isDark={isDark} />
+            <NavButton label="Calendario" iconKey="calendar" active={activeTab === 'calendar'} onClick={() => setActiveTab('calendar')} color="indigo" isDark={isDark} />
+            <NavButton label="Logros" iconKey="trophy" active={activeTab === 'achievements'} onClick={() => setActiveTab('achievements')} color="yellow" isDark={isDark} />
+            <NavButton label="Jardín" iconKey="garden" active={activeTab === 'garden'} onClick={() => setActiveTab('garden')} color="pink" isDark={isDark} />
+            <NavButton label="Datos" iconKey="save" active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} color="blue" isDark={isDark} />
           </div>
         </div>
       </nav>
 
-      {/* Settings Modal */}
-      {activeTab === 'settings' && <SettingsPanel onClose={() => setActiveTab('dashboard')} />}
+      {activeTab === 'settings' && <SettingsPanel onClose={() => setActiveTab('dashboard')} isDark={isDark} />}
     </div>
   );
 }
 
-function NavButton({ label, iconKey, active, onClick, color }: { 
-  label: string; iconKey: 'home' | 'pencil' | 'chart' | 'save'; active: boolean; onClick: () => void; color: string 
+function NavButton({ label, iconKey, active, onClick, color, isDark }: { 
+  label: string; iconKey: 'home' | 'calendar' | 'trophy' | 'garden' | 'save'; active: boolean; onClick: () => void; color: string; isDark: boolean;
 }) {
   const icons = {
     home: <Home size={20} />,
-    pencil: <Plus size={20} />,
-    chart: <BarChart3 size={20} />,
+    calendar: <CalendarIcon size={20} />,
+    trophy: <Trophy size={20} />,
+    garden: <Flower2 size={20} />,
     save: <Save size={20} />,
   };
 
   const inlineIcons = {
     home: '🏠',
-    pencil: '✏️',
-    chart: '📊',
+    calendar: '📅',
+    trophy: '🏆',
+    garden: '🏡',
     save: '💾',
   };
 
   const colors: Record<string, string> = {
-    green: active ? 'bg-gradient-to-br from-green-400 to-emerald-500 text-white shadow-lg shadow-green-200' : 'text-gray-500',
-    pink: active ? 'bg-gradient-to-br from-pink-400 to-rose-500 text-white shadow-lg shadow-pink-200' : 'text-gray-500',
-    purple: active ? 'bg-gradient-to-br from-purple-400 to-violet-500 text-white shadow-lg shadow-purple-200' : 'text-gray-500',
-    blue: active ? 'bg-gradient-to-br from-blue-400 to-cyan-500 text-white shadow-lg shadow-blue-200' : 'text-gray-500',
+    green: active ? 'bg-gradient-to-br from-green-400 to-emerald-500 text-white shadow-lg shadow-green-200/50' : isDark ? 'text-gray-400' : 'text-gray-500',
+    indigo: active ? 'bg-gradient-to-br from-indigo-400 to-purple-500 text-white shadow-lg shadow-indigo-200/50' : isDark ? 'text-gray-400' : 'text-gray-500',
+    yellow: active ? 'bg-gradient-to-br from-yellow-400 to-amber-500 text-white shadow-lg shadow-yellow-200/50' : isDark ? 'text-gray-400' : 'text-gray-500',
+    pink: active ? 'bg-gradient-to-br from-pink-400 to-rose-500 text-white shadow-lg shadow-pink-200/50' : isDark ? 'text-gray-400' : 'text-gray-500',
+    blue: active ? 'bg-gradient-to-br from-blue-400 to-cyan-500 text-white shadow-lg shadow-blue-200/50' : isDark ? 'text-gray-400' : 'text-gray-500',
   };
 
   return (
     <button
       onClick={onClick}
-      className={`flex flex-col items-center gap-0.5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl transition-all duration-300 btn-cute min-w-[60px] ${
-        active ? `${colors[color]} scale-105` : 'hover:bg-gray-100/50 active:bg-gray-100'
+      className={`flex flex-col items-center gap-0.5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl transition-all duration-300 btn-cute min-w-[50px] sm:min-w-[60px] ${
+        active ? `${colors[color]} scale-105` : isDark ? 'hover:bg-gray-700 active:bg-gray-600' : 'hover:bg-gray-100/50 active:bg-gray-100'
       }`}
     >
       <span className="text-base leading-none">{active ? <Icon emoji={inlineIcons[iconKey]} size={20} /> : icons[iconKey]}</span>
-      <span className={`text-[10px] font-bold leading-tight ${active ? 'text-white' : 'text-gray-500'}`}>{label}</span>
+      <span className={`text-[9px] sm:text-[10px] font-bold leading-tight ${active ? 'text-white' : isDark ? 'text-gray-400' : 'text-gray-500'}`}>{label}</span>
     </button>
   );
 }
 
-function SettingsPanel({ onClose }: { onClose: () => void }) {
+function SettingsPanel({ onClose, isDark }: { onClose: () => void; isDark: boolean }) {
   const exportData = async (format: 'json' | 'csv') => {
     const data = {
       plantas: await db.plantas.toArray(),
@@ -187,21 +216,6 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
       lines.push('planta_nombre,fecha,tipo,cantidad');
       data.riegos.forEach(r => {
         lines.push(`"${r.planta_nombre}","${r.fecha}","${r.tipo}","${r.cantidad}"`);
-      });
-      lines.push('\n=== BITÁCORA ===');
-      lines.push('fecha,planta_nombre,altura_cm,num_plantas');
-      data.bitacora.forEach(b => {
-        lines.push(`"${b.fecha}","${b.planta_nombre}",${b.altura_cm},${b.num_plantas}`);
-      });
-      lines.push('\n=== SALUD ===');
-      lines.push('fecha_deteccion,planta_nombre,sintoma,causa,tratamiento,estado,fecha_revision');
-      data.salud.forEach(s => {
-        lines.push(`"${s.fecha_deteccion}","${s.planta_nombre}","${s.sintoma_riesgo}","${s.causa_probable}","${s.tratamiento_natural}","${s.estado}","${s.fecha_revision}"`);
-      });
-      lines.push('\n=== COSECHAS ===');
-      lines.push('fecha,planta_nombre,parte_cosechada,cantidad');
-      data.cosechas.forEach(c => {
-        lines.push(`"${c.fecha}","${c.planta_nombre}","${c.parte_cosechada}",${c.cantidad_estimada}`);
       });
       content = lines.join('\n');
       filename = `huerto_backup_${new Date().toISOString().split('T')[0]}.csv`;
@@ -247,7 +261,7 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
   };
 
   const resetData = async () => {
-    if (confirm('⚠️ ¿Seguro que quieres borrar TODOS los datos? Esta acción no se puede deshacer.')) {
+    if (confirm('⚠️ ¿Seguro que quieres borrar TODOS los datos?')) {
       await db.plantas.clear();
       await db.riegos.clear();
       await db.bitacora.clear();
@@ -266,21 +280,25 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm flex items-end justify-center" onClick={onClose}>
       <div 
-        className="bg-white/95 backdrop-blur-xl rounded-t-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-slide-up border-t-2 border-white/50 shadow-2xl"
+        className={`rounded-t-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-slide-up shadow-2xl ${
+          isDark ? 'bg-gray-800/95 border-t-2 border-gray-700' : 'bg-white/95 border-t-2 border-white/50'
+        } backdrop-blur-xl`}
         onClick={e => e.stopPropagation()}
       >
-        {/* Handle de arrastre */}
-        <div className="sticky top-0 bg-white/95 backdrop-blur-xl pt-3 pb-2 px-6 border-b border-gray-100 z-10">
-          <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-3"></div>
+        <div className={`sticky top-0 pt-3 pb-2 px-6 border-b z-10 ${
+          isDark ? 'bg-gray-800/95 border-gray-700' : 'bg-white/95 border-gray-100'
+        } backdrop-blur-xl`}>
+          <div className={`w-12 h-1.5 rounded-full mx-auto mb-3 ${isDark ? 'bg-gray-600' : 'bg-gray-300'}`}></div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Save size={24} className="text-blue-500" />
-              <h2 className="text-lg font-black text-gray-900">Gestión de Datos</h2>
+              <Save size={24} className={isDark ? 'text-blue-400' : 'text-blue-500'} />
+              <h2 className={`text-lg font-black ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>Gestión de Datos</h2>
             </div>
             <button 
               onClick={onClose} 
-              className="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-600 transition-all btn-cute active:scale-95"
-              aria-label="Cerrar"
+              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all btn-cute active:scale-95 ${
+                isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -291,57 +309,55 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
         </div>
         
         <div className="p-4 pb-6 space-y-3">
-          <button
-            onClick={() => exportData('json')}
-            className="w-full flex items-center gap-3 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border-2 border-green-200 hover:border-green-300 transition-all btn-cute shadow-cute active:scale-[0.98]"
-          >
+          <button onClick={() => exportData('json')} className={`w-full flex items-center gap-3 p-4 rounded-2xl border-2 transition-all btn-cute shadow-cute active:scale-[0.98] ${
+            isDark ? 'bg-green-900/30 border-green-800' : 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200'
+          }`}>
             <Package size={32} />
             <div className="text-left flex-1 min-w-0">
-              <p className="font-bold text-green-900 text-sm">Exportar JSON</p>
-              <p className="text-xs text-green-700">Backup completo de todos los datos</p>
+              <p className={`font-bold text-sm ${isDark ? 'text-green-300' : 'text-green-900'}`}>Exportar JSON</p>
+              <p className={`text-xs ${isDark ? 'text-green-400' : 'text-green-700'}`}>Backup completo</p>
             </div>
           </button>
           
-          <button
-            onClick={() => exportData('csv')}
-            className="w-full flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl border-2 border-blue-200 hover:border-blue-300 transition-all btn-cute shadow-cute active:scale-[0.98]"
-          >
+          <button onClick={() => exportData('csv')} className={`w-full flex items-center gap-3 p-4 rounded-2xl border-2 transition-all btn-cute shadow-cute active:scale-[0.98] ${
+            isDark ? 'bg-blue-900/30 border-blue-800' : 'bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200'
+          }`}>
             <Chart size={32} />
             <div className="text-left flex-1 min-w-0">
-              <p className="font-bold text-blue-900 text-sm">Exportar CSV</p>
-              <p className="text-xs text-blue-700">Compatible con Excel y hojas de cálculo</p>
+              <p className={`font-bold text-sm ${isDark ? 'text-blue-300' : 'text-blue-900'}`}>Exportar CSV</p>
+              <p className={`text-xs ${isDark ? 'text-blue-400' : 'text-blue-700'}`}>Compatible con Excel</p>
             </div>
           </button>
           
-          <button
-            onClick={importData}
-            className="w-full flex items-center gap-3 p-4 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-2xl border-2 border-amber-200 hover:border-amber-300 transition-all btn-cute shadow-cute active:scale-[0.98]"
-          >
+          <button onClick={importData} className={`w-full flex items-center gap-3 p-4 rounded-2xl border-2 transition-all btn-cute shadow-cute active:scale-[0.98] ${
+            isDark ? 'bg-amber-900/30 border-amber-800' : 'bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-200'
+          }`}>
             <Download size={32} />
             <div className="text-left flex-1 min-w-0">
-              <p className="font-bold text-amber-900 text-sm">Importar JSON</p>
-              <p className="text-xs text-amber-700">Restaurar desde un backup anterior</p>
+              <p className={`font-bold text-sm ${isDark ? 'text-amber-300' : 'text-amber-900'}`}>Importar JSON</p>
+              <p className={`text-xs ${isDark ? 'text-amber-400' : 'text-amber-700'}`}>Restaurar backup</p>
             </div>
           </button>
           
-          <button
-            onClick={resetData}
-            className="w-full flex items-center gap-3 p-4 bg-gradient-to-r from-red-50 to-pink-50 rounded-2xl border-2 border-red-200 hover:border-red-300 transition-all btn-cute shadow-cute active:scale-[0.98]"
-          >
+          <button onClick={resetData} className={`w-full flex items-center gap-3 p-4 rounded-2xl border-2 transition-all btn-cute shadow-cute active:scale-[0.98] ${
+            isDark ? 'bg-red-900/30 border-red-800' : 'bg-gradient-to-r from-red-50 to-pink-50 border-red-200'
+          }`}>
             <Refresh size={32} />
             <div className="text-left flex-1 min-w-0">
-              <p className="font-bold text-red-900 text-sm">Reiniciar datos</p>
-              <p className="text-xs text-red-700">Volver a los datos de ejemplo</p>
+              <p className={`font-bold text-sm ${isDark ? 'text-red-300' : 'text-red-900'}`}>Reiniciar datos</p>
+              <p className={`text-xs ${isDark ? 'text-red-400' : 'text-red-700'}`}>Volver a datos de ejemplo</p>
             </div>
           </button>
-        </div>
-
-        <div className="pb-6 text-center">
-          <p className="text-xs text-gray-400">Hecho con 💚 para tu huerto</p>
         </div>
       </div>
     </div>
   );
 }
 
-
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
+  );
+}

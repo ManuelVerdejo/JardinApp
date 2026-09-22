@@ -5,8 +5,16 @@ import type { Planta } from '../db/database';
 import { PlantFace, MoodMessage } from '../components/PlantFace';
 import { useConfetti, ConfettiOverlay } from '../components/Confetti';
 import StreakBadge from '../components/StreakBadge';
+import { ProgressBadge } from '../components/ProgressBadge';
+import { HeatMap } from '../components/HeatMap';
+import { Timeline } from '../components/Timeline';
+import { PlantComparator } from '../components/Comparator';
+import { Predictions } from '../components/Predictions';
+import { Infographic } from '../components/Infographic';
+import { Tooltip } from '../components/Tooltip';
 import { Icon } from '../components/Icon';
 import { WaterDrop, Rainbow, Alert } from '../components/Icons';
+import { useTheme } from '../context/ThemeContext';
 import { Clock } from 'lucide-react';
 
 interface Props {
@@ -20,6 +28,7 @@ export default function Dashboard({ onOpenFicha }: Props) {
   const [refreshKey, setRefreshKey] = useState(0);
   const { pieces, trigger: triggerConfetti } = useConfetti();
   const [justWatered, setJustWatered] = useState<string | null>(null);
+  const { isDark } = useTheme();
 
   useEffect(() => {
     const interval = setInterval(() => setRefreshKey(k => k + 1), 60000);
@@ -241,9 +250,30 @@ export default function Dashboard({ onOpenFicha }: Props) {
       {/* Racha */}
       <StreakBadge />
 
+      {/* Progresión visual */}
+      <ProgressBadge />
+
+      {/* Infografía semanal */}
+      <Tooltip content="Resumen de tu actividad de la última semana" position="top">
+        <div></div>
+      </Tooltip>
+      <Infographic />
+
+      {/* Mapa de calor */}
+      <HeatMap />
+
+      {/* Línea de tiempo */}
+      <Timeline />
+
+      {/* Comparador de plantas */}
+      <PlantComparator />
+
+      {/* Predicciones */}
+      <Predictions />
+
       {/* Footer cute */}
       <div className="text-center pt-4 pb-2">
-        <p className="text-[10px] text-gray-400 font-medium">
+        <p className="text-[10px] text-gray-400 dark:text-gray-500 font-medium">
           Toca una planta para ver su ficha completa ✨
         </p>
       </div>
