@@ -349,6 +349,52 @@ body {
 .animate-veg-3 { animation: veg-appear 0.8s ease-out forwards; animation-delay: 0.8s; }
 .animate-celebration-sparkle { animation: celebration-sparkle 1.5s ease-in-out infinite; }
 
+@keyframes butterfly-around {
+  0% { transform: rotate(0deg) translateX(60px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(60px) rotate(-360deg); }
+}
+
+@keyframes wing-left {
+  0%, 100% { transform: scaleX(1) rotate(-10deg); }
+  50% { transform: scaleX(0.3) rotate(-10deg); }
+}
+
+@keyframes wing-right {
+  0%, 100% { transform: scaleX(1) rotate(10deg); }
+  50% { transform: scaleX(0.3) rotate(10deg); }
+}
+
+@keyframes bird-fly-1 {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(30px, -10px); }
+  100% { transform: translate(60px, 0); }
+}
+
+@keyframes bird-fly-2 {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(-25px, -8px); }
+  100% { transform: translate(-50px, 0); }
+}
+
+@keyframes confetti {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100px) rotate(720deg); opacity: 0; }
+}
+
+@keyframes float-heart {
+  0% { transform: translateY(0) scale(0); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateY(-80px) scale(1.2); opacity: 0; }
+}
+
+.animate-butterfly-around { animation: butterfly-around 4s linear infinite; }
+.animate-wing-left { animation: wing-left 0.3s ease-in-out infinite; transform-origin: right center; }
+.animate-wing-right { animation: wing-right 0.3s ease-in-out infinite; transform-origin: left center; }
+.animate-bird-1 { animation: bird-fly-1 3s ease-in-out infinite; }
+.animate-bird-2 { animation: bird-fly-2 3.5s ease-in-out infinite; }
+.animate-confetti { animation: confetti 2s ease-out infinite; }
+.animate-float-heart { animation: float-heart 3s ease-out infinite; }
+
 /* ============ UTILIDADES ============ */
 .glass {
   background: rgba(255, 255, 255, 0.7);
