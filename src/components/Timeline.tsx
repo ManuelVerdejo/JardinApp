@@ -1,0 +1,137 @@
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '../db/database';
+import { Icon } from './Icon';
+import { useTheme } from '../context/ThemeContext';
+
+interface TimelineEvent {
+  date: string;
+  type: 'riego' | 'cosecha' | 'crecimiento' | 'salud';
+  planta: string;
+  description: string;
+  emoji: string;
+  color: string;
+}
+
+export function Timeline({ plantaNombre }: { plantaNombre?: string }) {
+  const { isDark } = useTheme();
+  const riegos = useLiveQuery(() => 
+    plantaNombre 
+      ? db.riegos.where('planta_nombre').equals(plantaNombre).toArray()
+      : db.riegos.toArray()
+  ) || [];
+  
+  const cosechas = useLiveQuery(() => 
+    plantaNombre 
+      ? db.cosechas.where('planta_nombre').equals(plantaNombre).toArray()
+      : db.cosechas.toArray()
+  ) || [];
+  
+  const bitacora = useLiveQuery(() => 
+    plantaNombre 
+      ? db.bitacora.where('planta_nombre').equals(plantaNombre).toArray()
+      : db.bitacora.toArray()
+  ) || [];
+  
+  const salud = useLiveQuery(() => 
+    plantaNombre 
+      ? db.salud.where('planta_nombre').equals(plantaNombre).toArray()
+      : db.salud.toArray()
+  ) || [];
+
+  // Combinar todos los eventos
+  const events: TimelineEvent[] = [
+    ...riegos.map(r => ({
+      date: r.fecha,
+      type: 'riego' as const,
+      planta: r.planta_nombre,
+      description: `${r.tipo} (${r.cantidad})`,
+      emoji: '💧',
+      color: 'blue',
+    })),
+    ...cosechas.map(c => ({
+      date: c.fecha,
+      type: 'cosecha' as const,
+      planta: c.planta_nombre,
+      description: `${c.parte_cosechada} (${c.cantidad_estimada} uds)`,
+      emoji: '✂️',
+      color: 'purple',
+    })),
+    ...bitacora.map(b => ({
+      date: b.fecha,
+      type: 'crecimiento' as const,
+      planta: b.planta_nombre,
+      description: `${b.altura_cm} cm · ${b.num_plantas} planta(s)`,
+      emoji: '📏',
+      color: 'green',
+    })),
+    ...salud.map(s => ({
+      date: s.fecha_deteccion,
+      type: 'salud' as const,
+      planta: s.planta_nombre,
+      description: s.sintoma_riesgo,
+      emoji: '🐛',
+      color: 'orange',
+    })),
+  ].sort((a, b) => b.date.localeCompare(a.date));
+
+  const colorClasses = {
+    blue: isDark ? 'bg-blue-900/30 border-blue-800' : 'bg-blue-100 border-blue-200',
+    purple: isDark ? 'bg-purple-900/30 border-purple-800' : 'bg-purple-100 border-purple-200',
+    green: isDark ? 'bg-green-900/30 border-green-800' : 'bg-green-100 border-green-200',
+    orange: isDark ? 'bg-orange-900/30 border-orange-800' : 'bg-orange-100 border-orange-200',
+  };
+
+  const lineColors = {
+    blue: isDark ? 'bg-blue-600' : 'bg-blue-300',
+    purple: isDark ? 'bg-purple-600' : 'bg-purple-300',
+    green: isDark ? 'bg-green-600' : 'bg-green-300',
+    orange: isDark ? 'bg-orange-600' : 'bg-orange-300',
+  };
+
+  return (
+    <div className={`rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-cute-lg animate-fade-in border-2 ${
+      isDark ? 'bg-gray-800/80 border-indigo-900' : 'bg-white/80 backdrop-blur-sm border-indigo-100'
+    }`}>
+      <div className="flex items-center gap-2 mb-3">
+        <div className="w-7 h-7 bg-gradient-to-br from-indigo-400 to-purple-400 rounded-xl flex items-center justify-center shadow-cute">
+          <Icon emoji="📜" size={14} />
+        </div>
+        <h3 className={`font-black text-xs sm:text-sm ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>
+          {plantaNombre ? 'Historial' : 'Línea de Tiempo'}
+        </h3>
+      </div>
+
+      {events.length === 0 ? (
+        <p className={`text-xs text-center py-6 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Sin eventos registrados</p>
+      ) : (
+        <div className="relative max-h-80 overflow-y-auto">
+          {events.slice(0, 20).map((event, i) => (
+            <div key={i} className="flex gap-3 mb-3 last:mb-0">
+              {/* Timeline line and dot */}
+              <div className="flex flex-col items-center">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${colorClasses[event.color as keyof typeof colorClasses]} border-2 flex-shrink-0`}>
+                  <Icon emoji={event.emoji} size={14} />
+                </div>
+                {i < events.slice(0, 20).length - 1 && (
+                  <div className={`w-0.5 flex-1 min-h-[20px] ${lineColors[event.color as keyof typeof lineColors]}`}></div>
+                )}
+              </div>
+              
+              {/* Content */}
+              <div className="flex-1 pb-2">
+                <div className="flex items-center justify-between mb-0.5">
+                  <p className={`text-xs font-bold truncate ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>
+                    {plantaNombre ? event.description : `${event.planta} · ${event.description}`}
+                  </p>
+                </div>
+                <p className={`text-[10px] ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                  {new Date(event.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
