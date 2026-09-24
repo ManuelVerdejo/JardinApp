@@ -74,9 +74,12 @@ function AppContent() {
       } backdrop-blur-md`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-2.5">
-            <div className="relative">
-              <Seedling size={24} className="animate-wiggle sm:hidden" />
-              <Seedling size={28} className="animate-wiggle hidden sm:block" />
+            <div className="relative flex-shrink-0">
+              <img 
+                src="/app-icon.jpg" 
+                alt="Logo Mi Huerto" 
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl shadow-cute object-cover border-2 border-white/80 dark:border-gray-700 animate-wiggle"
+              />
               <div className="absolute -top-1 -right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-pink-400 rounded-full animate-pulse-soft"></div>
             </div>
             <div>
