@@ -192,11 +192,11 @@ export function AddPlantModal({ isOpen, onClose, onSuccess }: AddPlantModalProps
             <select
               value={formData.fase_actual}
               onChange={(e) => setFormData({ ...formData, fase_actual: e.target.value })}
-              className={`w-full px-4 py-3 rounded-xl border-2 transition-all ${
+              className={`select-cute w-full px-4 py-3 rounded-xl border-2 transition-all font-bold ${
                 isDark
-                  ? 'bg-gray-700 border-gray-600 text-gray-100 focus:border-green-500'
-                  : 'bg-white border-gray-200 text-gray-900 focus:border-green-500'
-              } focus:outline-none focus:ring-2 focus:ring-green-500/20`}
+                  ? 'bg-gray-900/80 border-gray-700 text-gray-100 focus:border-emerald-500'
+                  : 'bg-white/90 border-emerald-200 text-gray-900 focus:border-emerald-500'
+              } focus:outline-none focus:ring-2 focus:ring-emerald-500/20`}
             >
               {phases.map(phase => (
                 <option key={phase} value={phase}>{phase}</option>
@@ -212,11 +212,11 @@ export function AddPlantModal({ isOpen, onClose, onSuccess }: AddPlantModalProps
             <select
               value={formData.horario_solar}
               onChange={(e) => setFormData({ ...formData, horario_solar: e.target.value })}
-              className={`w-full px-4 py-3 rounded-xl border-2 transition-all ${
+              className={`select-cute w-full px-4 py-3 rounded-xl border-2 transition-all font-bold ${
                 isDark
-                  ? 'bg-gray-700 border-gray-600 text-gray-100 focus:border-green-500'
-                  : 'bg-white border-gray-200 text-gray-900 focus:border-green-500'
-              } focus:outline-none focus:ring-2 focus:ring-green-500/20`}
+                  ? 'bg-gray-900/80 border-gray-700 text-gray-100 focus:border-emerald-500'
+                  : 'bg-white/90 border-emerald-200 text-gray-900 focus:border-emerald-500'
+              } focus:outline-none focus:ring-2 focus:ring-emerald-500/20`}
             >
               {sunOptions.map(option => (
                 <option key={option} value={option}>{option}</option>

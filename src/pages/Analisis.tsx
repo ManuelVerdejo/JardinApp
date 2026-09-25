@@ -124,10 +124,10 @@ export default function Analisis() {
         <select
           value={selectedPlanta}
           onChange={e => setSelectedPlanta(e.target.value)}
-          className={`w-full p-2.5 rounded-xl border-2 text-sm outline-none font-medium ${
+          className={`select-cute w-full p-2.5 rounded-xl border-2 text-sm outline-none font-bold transition-all ${
             isDark 
-              ? 'border-green-800 bg-green-900/30 text-green-300 focus:ring-2 focus:ring-green-700' 
-              : 'border-green-100 bg-green-50/50 focus:ring-2 focus:ring-green-300'
+              ? 'border-emerald-800/60 bg-gray-900/80 text-emerald-300 focus:ring-2 focus:ring-emerald-500' 
+              : 'border-emerald-200 bg-white/90 text-emerald-900 focus:ring-2 focus:ring-emerald-300'
           }`}
         >
           <option value="all">Todas las plantas</option>

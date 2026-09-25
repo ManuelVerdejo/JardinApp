@@ -9,6 +9,7 @@ import Calendar from './components/Calendar';
 import { Achievements } from './components/Achievements';
 import { VirtualGarden } from './components/VirtualGarden';
 import { InfographicGenerator } from './components/InfographicGenerator';
+import { FertilizationModule } from './components/FertilizationModule';
 import { FertilizerInventory } from './components/FertilizerInventory';
 import { FertilizationPlan } from './components/FertilizationPlan';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
@@ -22,7 +23,7 @@ import { Home, Plus, BarChart3, Save, Calendar as CalendarIcon, Trophy, Flower2,
 import { exportToCsv, exportToExcel, processSpreadsheetFile } from './utils/spreadsheetExportImport';
 import { useConfetti, ConfettiOverlay } from './components/Confetti';
 
-type TabType = 'dashboard' | 'registro' | 'analisis' | 'ficha' | 'calendar' | 'achievements' | 'garden' | 'infographic' | 'fertilizers' | 'fertilization-plan' | 'settings';
+type TabType = 'dashboard' | 'registro' | 'analisis' | 'ficha' | 'calendar' | 'achievements' | 'garden' | 'infographic' | 'fertilizers' | 'fertilization-plan' | 'fertilization' | 'settings';
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
@@ -87,7 +88,21 @@ function AppContent() {
               <p className={`text-[9px] sm:text-[10px] font-medium -mt-0.5 ${isDark ? 'text-gray-400' : 'text-green-600'}`}>Tu jardín feliz</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <button
+              onClick={() => setActiveTab('achievements')}
+              className={`p-1.5 sm:p-2 rounded-xl transition-all btn-cute shadow-sm flex items-center gap-1 ${
+                activeTab === 'achievements'
+                  ? 'bg-amber-400 text-amber-950 font-bold shadow-md scale-105'
+                  : isDark 
+                  ? 'bg-gray-800 text-amber-400 hover:bg-gray-700' 
+                  : 'bg-white/80 text-amber-600 hover:bg-white'
+              }`}
+              title="Logros y Niveles"
+              aria-label="Logros y Niveles"
+            >
+              <Trophy size={18} />
+            </button>
             <button
               onClick={() => setActiveTab('settings')}
               className={`p-1.5 sm:p-2 rounded-xl transition-all btn-cute shadow-sm flex items-center gap-1 ${
@@ -116,8 +131,9 @@ function AppContent() {
         {activeTab === 'achievements' && <Achievements />}
         {activeTab === 'garden' && <VirtualGarden />}
         {activeTab === 'infographic' && <InfographicGenerator />}
-        {activeTab === 'fertilizers' && <FertilizerInventory />}
-        {activeTab === 'fertilization-plan' && <FertilizationPlan />}
+        {activeTab === 'fertilization' && <FertilizationModule />}
+        {activeTab === 'fertilizers' && <FertilizationModule />}
+        {activeTab === 'fertilization-plan' && <FertilizationModule />}
       </main>
 
       {/* Bottom Navigation */}
@@ -128,9 +144,7 @@ function AppContent() {
           } backdrop-blur-md`}>
             <NavButton label="Inicio" iconKey="home" active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} color="green" isDark={isDark} />
             <NavButton label="Calendario" iconKey="calendar" active={activeTab === 'calendar'} onClick={() => setActiveTab('calendar')} color="indigo" isDark={isDark} />
-            <NavButton label="Fertilizantes" iconKey="fertilizers" active={activeTab === 'fertilizers'} onClick={() => setActiveTab('fertilizers')} color="blue" isDark={isDark} />
-            <NavButton label="Plan" iconKey="fertilization-plan" active={activeTab === 'fertilization-plan'} onClick={() => setActiveTab('fertilization-plan')} color="orange" isDark={isDark} />
-            <NavButton label="Logros" iconKey="trophy" active={activeTab === 'achievements'} onClick={() => setActiveTab('achievements')} color="yellow" isDark={isDark} />
+            <NavButton label="Fertilización" iconKey="fertilization" active={activeTab === 'fertilization' || activeTab === 'fertilizers' || activeTab === 'fertilization-plan'} onClick={() => setActiveTab('fertilization')} color="blue" isDark={isDark} />
             <NavButton label="Jardín" iconKey="garden" active={activeTab === 'garden'} onClick={() => setActiveTab('garden')} color="pink" isDark={isDark} />
           </div>
         </div>
@@ -142,7 +156,7 @@ function AppContent() {
 }
 
 function NavButton({ label, iconKey, active, onClick, color, isDark }: { 
-  label: string; iconKey: 'home' | 'calendar' | 'trophy' | 'garden' | 'infographic' | 'fertilizers' | 'fertilization-plan'; active: boolean; onClick: () => void; color: string; isDark: boolean;
+  label: string; iconKey: 'home' | 'calendar' | 'trophy' | 'garden' | 'infographic' | 'fertilizers' | 'fertilization-plan' | 'fertilization'; active: boolean; onClick: () => void; color: string; isDark: boolean;
 }) {
   const icons = {
     home: <Home size={20} />,
@@ -152,6 +166,7 @@ function NavButton({ label, iconKey, active, onClick, color, isDark }: {
     infographic: <FileText size={20} />,
     fertilizers: <FlaskConical size={20} />,
     'fertilization-plan': <CalendarDays size={20} />,
+    fertilization: <FlaskConical size={20} />,
   };
 
   const inlineIcons = {
@@ -162,6 +177,7 @@ function NavButton({ label, iconKey, active, onClick, color, isDark }: {
     infographic: '📊',
     fertilizers: '🧪',
     'fertilization-plan': '📆',
+    fertilization: '🧪',
   };
 
   const colors: Record<string, string> = {

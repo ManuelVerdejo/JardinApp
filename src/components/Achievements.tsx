@@ -3,6 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { Icon } from './Icon';
 import { useTheme } from '../context/ThemeContext';
+import StreakBadge from './StreakBadge';
 
 interface Achievement {
   id: string;
@@ -376,6 +377,9 @@ export function Achievements() {
           Desbloquea logros cuidando tu huerto
         </p>
       </div>
+
+      {/* Racha de días */}
+      <StreakBadge showEmpty={true} />
 
       {/* Level card mejorado */}
       <div className={`rounded-2xl sm:rounded-3xl p-4 shadow-cute-lg border-2 ${

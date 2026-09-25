@@ -173,7 +173,7 @@ export function AddFertilizerModal({ isOpen, onClose, onSuccess }: AddFertilizer
               <select
                 value={formData.unidad}
                 onChange={(e) => setFormData({ ...formData, unidad: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 transition-all"
+                className="select-cute w-full px-4 py-3 rounded-xl border-2 border-emerald-200 dark:border-gray-700 bg-white/90 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-bold focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
               >
                 <option value="litros">Litros</option>
                 <option value="ml">Mililitros</option>

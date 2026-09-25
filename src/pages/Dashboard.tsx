@@ -4,8 +4,6 @@ import { db } from '../db/database';
 import type { Planta, PlanFertilizacion } from '../db/database';
 import { PlantFace, MoodMessage } from '../components/PlantFace';
 import { useConfetti, ConfettiOverlay } from '../components/Confetti';
-import StreakBadge from '../components/StreakBadge';
-import { ProgressBadge } from '../components/ProgressBadge';
 import { HeatMap } from '../components/HeatMap';
 import { Timeline } from '../components/Timeline';
 import { PlantComparator } from '../components/Comparator';
@@ -361,21 +359,13 @@ export default function Dashboard({ onOpenFicha }: Props) {
         </div>
       </div>
 
-      {/* Racha */}
-      <StreakBadge />
-
-      {/* Progresión visual */}
-      <ProgressBadge />
-
       {/* Infografía semanal */}
-      <Tooltip content="Resumen de tu actividad de los últimos 7 días" position="top">
-        <div className="relative">
-          <Infographic />
-        </div>
-      </Tooltip>
+      <div className="w-full min-w-0">
+        <Infographic />
+      </div>
 
       {/* Mapa de calor */}
-      <div className="relative">
+      <div className="relative w-full min-w-0">
         {showTooltips && (
           <FeatureTooltip
             content="¡Nuevo! Mapa de calor que muestra tu actividad de riego en los últimos 90 días"
@@ -389,24 +379,18 @@ export default function Dashboard({ onOpenFicha }: Props) {
       </div>
 
       {/* Línea de tiempo */}
-      <div className="relative">
-        <Tooltip content="Historial cronológico de todas las actividades de tu huerto" position="top">
-          <Timeline />
-        </Tooltip>
+      <div className="w-full min-w-0">
+        <Timeline />
       </div>
 
       {/* Comparador de plantas */}
-      <div className="relative">
-        <Tooltip content="Compara el crecimiento de dos plantas lado a lado" position="top">
-          <PlantComparator />
-        </Tooltip>
+      <div className="w-full min-w-0">
+        <PlantComparator />
       </div>
 
       {/* Predicciones */}
-      <div className="relative">
-        <Tooltip content="Predicciones basadas en el historial de crecimiento de tus plantas" position="top">
-          <Predictions />
-        </Tooltip>
+      <div className="w-full min-w-0">
+        <Predictions />
       </div>
 
       {/* Footer cute */}

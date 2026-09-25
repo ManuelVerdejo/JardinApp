@@ -56,41 +56,41 @@ export function PlantComparator() {
   const planta2 = plantas.find(p => p.nombre === plant2);
 
   return (
-    <div className={`rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-cute-lg animate-fade-in border-2 ${
+    <div className={`w-full max-w-full min-w-0 overflow-hidden rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-cute-lg animate-fade-in border-2 ${
       isDark ? 'bg-gray-800/80 border-cyan-900' : 'bg-white/80 backdrop-blur-sm border-cyan-100'
     }`}>
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-7 h-7 bg-gradient-to-br from-cyan-400 to-blue-400 rounded-xl flex items-center justify-center shadow-cute">
+      <div className="flex items-center gap-2 mb-3 min-w-0">
+        <div className="w-7 h-7 bg-gradient-to-br from-cyan-400 to-blue-400 rounded-xl flex items-center justify-center shadow-cute flex-shrink-0">
           <Icon emoji="⚖️" size={14} />
         </div>
-        <h3 className={`font-black text-xs sm:text-sm ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Comparador de Plantas</h3>
+        <h3 className={`font-black text-xs sm:text-sm truncate ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Comparador de Plantas</h3>
       </div>
 
       {/* Selectors */}
-      <div className="grid grid-cols-2 gap-2 mb-3">
-        <div>
-          <label className={`text-[10px] font-bold mb-1 block ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Planta 1</label>
+      <div className="grid grid-cols-2 gap-2 mb-3 min-w-0">
+        <div className="min-w-0">
+          <label className={`text-[10px] font-bold mb-1 block truncate ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Planta 1</label>
           <select
             value={plant1}
             onChange={e => setPlant1(e.target.value)}
-            className={`w-full p-2 rounded-lg border-2 text-xs outline-none font-medium ${
+            className={`select-cute w-full p-2 pr-7 rounded-xl border-2 text-xs outline-none font-bold transition-all ${
               isDark 
-                ? 'border-cyan-900 bg-cyan-900/20 text-cyan-300 focus:ring-2 focus:ring-cyan-700' 
-                : 'border-cyan-100 bg-cyan-50/50 focus:ring-2 focus:ring-cyan-300'
+                ? 'border-cyan-900/60 bg-gray-900/80 text-cyan-300 focus:ring-2 focus:ring-cyan-600' 
+                : 'border-cyan-200 bg-white/90 text-cyan-900 focus:ring-2 focus:ring-cyan-300'
             }`}
           >
             {plantas.map(p => <option key={p.planta_id} value={p.nombre}>{p.nombre}</option>)}
           </select>
         </div>
-        <div>
-          <label className={`text-[10px] font-bold mb-1 block ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Planta 2</label>
+        <div className="min-w-0">
+          <label className={`text-[10px] font-bold mb-1 block truncate ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Planta 2</label>
           <select
             value={plant2}
             onChange={e => setPlant2(e.target.value)}
-            className={`w-full p-2 rounded-lg border-2 text-xs outline-none font-medium ${
+            className={`select-cute w-full p-2 pr-7 rounded-xl border-2 text-xs outline-none font-bold transition-all ${
               isDark 
-                ? 'border-cyan-900 bg-cyan-900/20 text-cyan-300 focus:ring-2 focus:ring-cyan-700' 
-                : 'border-cyan-100 bg-cyan-50/50 focus:ring-2 focus:ring-cyan-300'
+                ? 'border-cyan-900/60 bg-gray-900/80 text-cyan-300 focus:ring-2 focus:ring-cyan-600' 
+                : 'border-cyan-200 bg-white/90 text-cyan-900 focus:ring-2 focus:ring-cyan-300'
             }`}
           >
             {plantas.map(p => <option key={p.planta_id} value={p.nombre}>{p.nombre}</option>)}
@@ -148,23 +148,25 @@ export function PlantComparator() {
 
       {/* Chart */}
       {comparisonData.length > 0 ? (
-        <ResponsiveContainer width="100%" height={160}>
-          <LineChart data={comparisonData}>
-            <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#374151' : '#e5e7eb'} strokeOpacity={0.5} />
-            <XAxis dataKey="fecha" tick={{ fontSize: 9, fill: isDark ? '#9ca3af' : '#6b7280' }} />
-            <YAxis tick={{ fontSize: 9, fill: isDark ? '#9ca3af' : '#6b7280' }} />
-            <Tooltip contentStyle={{ 
-              fontSize: 11, 
-              borderRadius: 8,
-              backgroundColor: isDark ? '#1f2937' : '#ffffff',
-              border: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
-              color: isDark ? '#e5e7eb' : '#1f2937'
-            }} />
-            <Legend wrapperStyle={{ fontSize: 10, color: isDark ? '#e5e7eb' : '#1f2937' }} />
-            <Line type="monotone" dataKey={plant1} stroke="#ec4899" strokeWidth={2} dot={{ r: 3 }} connectNulls />
-            <Line type="monotone" dataKey={plant2} stroke="#3b82f6" strokeWidth={2} dot={{ r: 3 }} connectNulls />
-          </LineChart>
-        </ResponsiveContainer>
+        <div className="w-full min-w-0 h-40 overflow-hidden">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={comparisonData}>
+              <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#374151' : '#e5e7eb'} strokeOpacity={0.5} />
+              <XAxis dataKey="fecha" tick={{ fontSize: 9, fill: isDark ? '#9ca3af' : '#6b7280' }} />
+              <YAxis tick={{ fontSize: 9, fill: isDark ? '#9ca3af' : '#6b7280' }} />
+              <Tooltip contentStyle={{ 
+                fontSize: 11, 
+                borderRadius: 8,
+                backgroundColor: isDark ? '#1f2937' : '#ffffff',
+                border: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
+                color: isDark ? '#e5e7eb' : '#1f2937'
+              }} />
+              <Legend wrapperStyle={{ fontSize: 10, color: isDark ? '#e5e7eb' : '#1f2937' }} />
+              <Line type="monotone" dataKey={plant1} stroke="#ec4899" strokeWidth={2} dot={{ r: 3 }} connectNulls />
+              <Line type="monotone" dataKey={plant2} stroke="#3b82f6" strokeWidth={2} dot={{ r: 3 }} connectNulls />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       ) : (
         <p className={`text-xs text-center py-6 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Sin datos para comparar</p>
       )}

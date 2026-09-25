@@ -56,14 +56,14 @@ export function Predictions() {
   }).filter(p => p.growthRate !== null);
 
   return (
-    <div className={`rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-cute-lg animate-fade-in border-2 ${
+    <div className={`w-full max-w-full min-w-0 overflow-hidden rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-cute-lg animate-fade-in border-2 ${
       isDark ? 'bg-gray-800/80 border-amber-900' : 'bg-white/80 backdrop-blur-sm border-amber-100'
     }`}>
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-7 h-7 bg-gradient-to-br from-amber-400 to-orange-400 rounded-xl flex items-center justify-center shadow-cute">
+      <div className="flex items-center gap-2 mb-3 min-w-0">
+        <div className="w-7 h-7 bg-gradient-to-br from-amber-400 to-orange-400 rounded-xl flex items-center justify-center shadow-cute flex-shrink-0">
           <Icon emoji="🔮" size={14} />
         </div>
-        <h3 className={`font-black text-xs sm:text-sm ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Predicciones</h3>
+        <h3 className={`font-black text-xs sm:text-sm truncate ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Predicciones</h3>
       </div>
 
       {predictions.length === 0 ? (
@@ -71,17 +71,17 @@ export function Predictions() {
           Necesitas más datos para generar predicciones
         </p>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-2 w-full min-w-0">
           {predictions.slice(0, 5).map((pred, i) => (
-            <div key={i} className={`rounded-xl p-2.5 border ${
+            <div key={i} className={`rounded-xl p-2.5 border w-full min-w-0 overflow-hidden ${
               isDark ? 'bg-gradient-to-r from-amber-900/20 to-orange-900/20 border-amber-800' : 'bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200'
             }`}>
-              <div className="flex items-center gap-2 mb-1.5">
+              <div className="flex items-center gap-2 mb-1.5 min-w-0">
                 <Icon emoji={pred.planta.emoji} size={20} />
-                <span className={`text-xs font-bold ${isDark ? 'text-amber-300' : 'text-amber-900'}`}>{pred.planta.nombre}</span>
+                <span className={`text-xs font-bold truncate ${isDark ? 'text-amber-300' : 'text-amber-900'}`}>{pred.planta.nombre}</span>
               </div>
               
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2 min-w-0">
                 {pred.nextHeight && (
                   <div>
                     <p className={`text-[9px] mb-0.5 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Altura en 7 días:</p>

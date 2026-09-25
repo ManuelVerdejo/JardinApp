@@ -133,7 +133,7 @@ function FormRiego({ nombres, onSuccess, plantas }: { nombres: string[]; onSucce
         <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
           <Icon emoji="🌱" size={14} /> Planta
         </label>
-        <select value={planta} onChange={e => setPlanta(e.target.value)} className="w-full p-2.5 sm:p-3 rounded-lg sm:rounded-xl border-2 border-blue-100 text-sm bg-blue-50/50 focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none font-medium">
+        <select value={planta} onChange={e => setPlanta(e.target.value)} className="select-cute w-full p-2.5 sm:p-3 rounded-xl border-2 border-blue-200 dark:border-blue-800 text-sm bg-blue-50/50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-300 outline-none font-bold">
           {nombres.map(n => <option key={n} value={n}>{n}</option>)}
         </select>
       </div>
@@ -246,7 +246,7 @@ function FormCrecimiento({ nombres, onSuccess, plantas }: { nombres: string[]; o
         <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
           <Icon emoji="🌱" size={14} /> Planta
         </label>
-        <select value={planta} onChange={e => setPlanta(e.target.value)} className="w-full p-3 rounded-xl border-2 border-green-100 text-sm bg-green-50/50 focus:ring-2 focus:ring-green-300 outline-none font-medium">
+        <select value={planta} onChange={e => setPlanta(e.target.value)} className="select-cute w-full p-3 rounded-xl border-2 border-green-200 dark:border-green-800 text-sm bg-green-50/50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-300 outline-none font-bold">
           {nombres.map(n => <option key={n} value={n}>{n}</option>)}
         </select>
       </div>
@@ -344,7 +344,7 @@ function FormSalud({ nombres, onSuccess, plantas }: { nombres: string[]; onSucce
         <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
           <Icon emoji="🌱" size={14} /> Planta
         </label>
-        <select value={planta} onChange={e => setPlanta(e.target.value)} className="w-full p-3 rounded-xl border-2 border-orange-100 text-sm bg-orange-50/50 focus:ring-2 focus:ring-orange-300 outline-none font-medium">
+        <select value={planta} onChange={e => setPlanta(e.target.value)} className="select-cute w-full p-3 rounded-xl border-2 border-orange-200 dark:border-orange-800 text-sm bg-orange-50/50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-orange-300 outline-none font-bold">
           {nombres.map(n => <option key={n} value={n}>{n}</option>)}
         </select>
       </div>
@@ -392,7 +392,7 @@ function FormSalud({ nombres, onSuccess, plantas }: { nombres: string[]; onSucce
           <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
             <ClipboardIcon size={14} /> Estado
           </label>
-          <select value={estado} onChange={e => setEstado(e.target.value as any)} className="w-full p-3 rounded-xl border-2 border-orange-100 text-sm bg-orange-50/50 outline-none font-medium">
+          <select value={estado} onChange={e => setEstado(e.target.value as any)} className="select-cute w-full p-3 rounded-xl border-2 border-orange-200 dark:border-orange-800 text-sm bg-orange-50/50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none font-bold">
             <option value="En seguimiento">En seguimiento</option>
             <option value="Resuelto">Resuelto</option>
           </select>
@@ -463,7 +463,7 @@ function FormCosecha({ nombres, onSuccess, plantas }: { nombres: string[]; onSuc
         <label className="text-xs font-bold text-gray-600 mb-1.5 block flex items-center gap-1">
           <Icon emoji="🌱" size={14} /> Planta
         </label>
-        <select value={planta} onChange={e => setPlanta(e.target.value)} className="w-full p-3 rounded-xl border-2 border-purple-100 text-sm bg-purple-50/50 focus:ring-2 focus:ring-purple-300 outline-none font-medium">
+        <select value={planta} onChange={e => setPlanta(e.target.value)} className="select-cute w-full p-3 rounded-xl border-2 border-purple-200 dark:border-purple-800 text-sm bg-purple-50/50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-300 outline-none font-bold">
           {nombres.map(n => <option key={n} value={n}>{n}</option>)}
         </select>
       </div>

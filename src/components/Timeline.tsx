@@ -89,14 +89,14 @@ export function Timeline({ plantaNombre }: { plantaNombre?: string }) {
   };
 
   return (
-    <div className={`rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-cute-lg animate-fade-in border-2 ${
+    <div className={`w-full max-w-full min-w-0 overflow-hidden rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-cute-lg animate-fade-in border-2 ${
       isDark ? 'bg-gray-800/80 border-indigo-900' : 'bg-white/80 backdrop-blur-sm border-indigo-100'
     }`}>
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-7 h-7 bg-gradient-to-br from-indigo-400 to-purple-400 rounded-xl flex items-center justify-center shadow-cute">
+      <div className="flex items-center gap-2 mb-3 min-w-0">
+        <div className="w-7 h-7 bg-gradient-to-br from-indigo-400 to-purple-400 rounded-xl flex items-center justify-center shadow-cute flex-shrink-0">
           <Icon emoji="📜" size={14} />
         </div>
-        <h3 className={`font-black text-xs sm:text-sm ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>
+        <h3 className={`font-black text-xs sm:text-sm truncate ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>
           {plantaNombre ? 'Historial' : 'Línea de Tiempo'}
         </h3>
       </div>
@@ -104,11 +104,11 @@ export function Timeline({ plantaNombre }: { plantaNombre?: string }) {
       {events.length === 0 ? (
         <p className={`text-xs text-center py-6 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Sin eventos registrados</p>
       ) : (
-        <div className="relative max-h-80 overflow-y-auto">
+        <div className="relative max-h-80 overflow-y-auto w-full min-w-0">
           {events.slice(0, 20).map((event, i) => (
-            <div key={i} className="flex gap-3 mb-3 last:mb-0">
+            <div key={i} className="flex gap-3 mb-3 last:mb-0 min-w-0">
               {/* Timeline line and dot */}
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center flex-shrink-0">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center ${colorClasses[event.color as keyof typeof colorClasses]} border-2 flex-shrink-0`}>
                   <Icon emoji={event.emoji} size={14} />
                 </div>
@@ -118,8 +118,8 @@ export function Timeline({ plantaNombre }: { plantaNombre?: string }) {
               </div>
               
               {/* Content */}
-              <div className="flex-1 pb-2">
-                <div className="flex items-center justify-between mb-0.5">
+              <div className="flex-1 pb-2 min-w-0">
+                <div className="flex items-center justify-between mb-0.5 min-w-0">
                   <p className={`text-xs font-bold truncate ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>
                     {plantaNombre ? event.description : `${event.planta} · ${event.description}`}
                   </p>

@@ -43,17 +43,17 @@ export function Infographic() {
   const cosechaTop = Object.entries(cosechaPorPlanta).sort((a, b) => b[1] - a[1])[0];
 
   return (
-    <div className={`rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-cute-lg animate-fade-in border-2 ${
+    <div className={`w-full max-w-full min-w-0 overflow-hidden rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-cute-lg animate-fade-in border-2 ${
       isDark 
         ? 'bg-gradient-to-br from-violet-900/30 via-purple-900/20 to-pink-900/30 border-purple-800' 
         : 'bg-gradient-to-br from-violet-100 via-purple-50 to-pink-100 border-purple-200'
     }`}>
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-7 h-7 bg-gradient-to-br from-violet-400 to-purple-500 rounded-xl flex items-center justify-center shadow-cute">
+      <div className="flex items-center gap-2 mb-3 min-w-0">
+        <div className="w-7 h-7 bg-gradient-to-br from-violet-400 to-purple-500 rounded-xl flex items-center justify-center shadow-cute flex-shrink-0">
           <Icon emoji="📊" size={14} />
         </div>
-        <h3 className={`font-black text-xs sm:text-sm ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Resumen Semanal</h3>
-        <span className={`ml-auto text-[9px] px-2 py-0.5 rounded-full font-bold ${
+        <h3 className={`font-black text-xs sm:text-sm truncate ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Resumen Semanal</h3>
+        <span className={`ml-auto text-[9px] px-2 py-0.5 rounded-full font-bold flex-shrink-0 ${
           isDark ? 'bg-purple-800 text-purple-300' : 'bg-purple-200 text-purple-800'
         }`}>
           Últimos 7 días
@@ -61,8 +61,8 @@ export function Infographic() {
       </div>
 
       {/* Stats grid */}
-      <div className="grid grid-cols-2 gap-2 mb-3">
-        <div className={`rounded-xl p-2.5 border ${
+      <div className="grid grid-cols-2 gap-2 mb-3 min-w-0">
+        <div className={`rounded-xl p-2.5 border min-w-0 overflow-hidden ${
           isDark ? 'bg-gray-800/60 border-blue-800' : 'bg-white/60 border-blue-200'
         }`}>
           <div className="flex items-center gap-1.5 mb-1">
