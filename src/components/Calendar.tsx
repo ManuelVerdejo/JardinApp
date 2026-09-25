@@ -27,8 +27,22 @@ export default function Calendar() {
   const { pieces, trigger: triggerConfetti } = useConfetti();
   const plantas = useLiveQuery(() => db.plantas.toArray()) || [];
   const riegos = useLiveQuery(() => db.riegos.toArray()) || [];
-  const salud = useLiveQuery(() => db.salud.where('estado').equals('En seguimiento').toArray()) || [];
-  const planesFertilizacion = useLiveQuery(() => db.planesFertilizacion.where('activo').equals(1).toArray()) || [];
+  const salud = useLiveQuery(async () => {
+    try {
+      const items = await db.salud.toArray();
+      return items.filter(s => s.estado === 'En seguimiento');
+    } catch {
+      return [];
+    }
+  }) || [];
+  const planesFertilizacion = useLiveQuery(async () => {
+    try {
+      const planes = await db.planesFertilizacion.toArray();
+      return planes.filter(p => Boolean(p.activo));
+    } catch {
+      return [];
+    }
+  }) || [];
   const [completedTasks, setCompletedTasks] = useState<Set<string>>(new Set());
 
   const [currentDate, setCurrentDate] = useState(new Date());

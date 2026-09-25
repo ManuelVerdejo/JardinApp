@@ -26,8 +26,22 @@ interface Props {
 export default function Dashboard({ onOpenFicha }: Props) {
   const plantas = useLiveQuery(() => db.plantas.toArray()) || [];
   const riegos = useLiveQuery(() => db.riegos.toArray()) || [];
-  const alertasSalud = useLiveQuery(() => db.salud.where('estado').equals('En seguimiento').toArray()) || [];
-  const planesFertilizacion = useLiveQuery(() => db.planesFertilizacion.where('activo').equals(1).toArray()) || [];
+  const alertasSalud = useLiveQuery(async () => {
+    try {
+      const items = await db.salud.toArray();
+      return items.filter(s => s.estado === 'En seguimiento');
+    } catch {
+      return [];
+    }
+  }) || [];
+  const planesFertilizacion = useLiveQuery(async () => {
+    try {
+      const planes = await db.planesFertilizacion.toArray();
+      return planes.filter(p => Boolean(p.activo));
+    } catch {
+      return [];
+    }
+  }) || [];
   const [refreshKey, setRefreshKey] = useState(0);
   const { pieces, trigger: triggerConfetti } = useConfetti();
   const [justWatered, setJustWatered] = useState<string | null>(null);
@@ -100,7 +114,8 @@ export default function Dashboard({ onOpenFicha }: Props) {
     lastDate.setHours(0, 0, 0, 0);
     
     const daysSince = Math.floor((today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
-    const daysRemaining = planta.frecuencia_riego_dias - daysSince;
+    const frecuencia = Number(planta.frecuencia_riego_dias) || 2;
+    const daysRemaining = frecuencia - daysSince;
 
     let status: 'happy' | 'thirsty' | 'critical';
     if (daysRemaining > 0) status = 'happy';
@@ -281,7 +296,7 @@ export default function Dashboard({ onOpenFicha }: Props) {
         <div className="space-y-2.5 sm:space-y-3">
           {sortedPlantas.map((planta, index) => {
             const status = getWaterStatus(planta);
-            const style = cardStyles[status.status];
+            const style = cardStyles[status.status] || cardStyles.happy;
             const isWatered = justWatered === planta.nombre;
             
             return (

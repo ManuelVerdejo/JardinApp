@@ -94,6 +94,9 @@ export class HuertoDB extends Dexie {
       fertilizantes: '++id, nombre, fecha_creacion',
       planesFertilizacion: '++id, planta_nombre, fertilizante_nombre',
     });
+    this.version(4).stores({
+      planesFertilizacion: '++id, planta_nombre, fertilizante_nombre, activo',
+    });
   }
 }
 

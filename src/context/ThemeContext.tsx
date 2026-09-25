@@ -21,7 +21,7 @@ const ThemeContext = createContext<ThemeContextType>({
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
     const saved = localStorage.getItem('huerto-theme');
-    return (saved as Theme) || 'system';
+    return (saved as Theme) || 'light';
   });
 
   const [systemPrefersDark, setSystemPrefersDark] = useState(() => {
